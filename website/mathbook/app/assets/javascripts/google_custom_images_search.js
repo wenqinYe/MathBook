@@ -1,11 +1,11 @@
 /**
-  Wrapper code for the google custom image search.
-  The wrapper performs a GET request is sent to the google custom searce
+  Wrapper code for the google custom image search api.
+  The wrapper performs a GET that request is sent to the google api
   endpoint at https://www.googleapis.com/customsearch/v1 with our api-key and
   text query.
 
   The GET request will return a JSON response with the image results for the
-  text query.
+  text query which is then parsed and returned.
 */
 
 const image_serarch_api_endpoint = "https://www.googleapis.com/customsearch/v1"
