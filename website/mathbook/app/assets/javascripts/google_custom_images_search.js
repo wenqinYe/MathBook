@@ -8,7 +8,7 @@
   text query.
 */
 
-static const image_serarch_api_endpoint = "https://www.googleapis.com/customsearch/v1"
+const image_serarch_api_endpoint = "https://www.googleapis.com/customsearch/v1"
 
 /**
 * @constructor
@@ -27,15 +27,40 @@ class GoogleImageSearch {
   * @constructor
   * @param {string} text_query - A text query
   */
-  results_for(text_query){
+  image_search(text_query, callback){
+    var sub_callback = function(response){
+      var result = JSON.parse(response);
+      var image_results = result["items"];
+      callback(image_results)
+    }
+    this.request_async({q: text_query,
+                        num: "3",
+                        start: "1",
+                        imgSize: "medium",
+                        searchType: "image"},
+                        sub_callback);
+
 
   }
 
-  /**
-  * Connects to the google custom serach api
-  */
-  connect(){
-
+  create_query(params) {
+    var query = "?";
+    /* Possible parameters
+    * q: query
+    * num: number of results
+    * start: where results should start (between 1 and 1001)
+    * imgSize: size of the image (example: "medium")
+    * searchType: image search type (example: "image")
+    * fileType: the file type (example: jpeg)
+    * key: google api key
+    * cx: Custom search engine key
+    */
+    for (var parameter in params) {
+      query += "&"+parameter+"="+params[parameter];
+    }
+    query += "&key="+this.api_key+"&cx="+this.cx;
+    query = image_serarch_api_endpoint + query;
+    return query;
   }
 
   /**
@@ -43,9 +68,24 @@ class GoogleImageSearch {
   *
   */
   request_async(params, callback){
-
-    for (parameter in params) {
-
+    var query = this.create_query(params)
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.onreadystatechange = function(){
+      if(xmlHttp.readyState == 4 && xmlHttp.status == 200){
+        callback(xmlHttp.responseText);
+      }
     }
+    xmlHttp.open("GET", query, true);
+    xmlHttp.send(null);
   }
+}
+
+
+function test(){
+  var api_key = "AIzaSyBf3M2egiEky-IJZGXumT0WVCcceaikD9Y";
+  var cx = "015679528378639472790:d5-533hcczs";
+  var google = new GoogleImageSearch(api_key, cx);
+  google.image_search("carbon atoms", function(results){
+    console.log(results);
+  });
 }
