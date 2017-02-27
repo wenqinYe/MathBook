@@ -53,7 +53,7 @@ function infixToPostfix(infix) {
         }
        }else if (char == "(") {
          console.log("opening brace");
-         stack.push(c);
+         stack.push(char);
       } else if (char == ")") {
       var item = stack[stack.length - 1];
       while (item != "(") {
@@ -131,10 +131,10 @@ function postfixToKatex(postfix) {
   return items.join("");
 }
 
-$(document).on('input',
-  function(event) {
-  //alert(isVariable("A"));
-    var sIn = String($("#txtIn").val());
-    katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
-
-  });
+// $(document).on('input',
+//   function(event) {
+//   //alert(isVariable("A"));
+//     var sIn = String($("#txtIn").val());
+//     katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
+//
+//   });
