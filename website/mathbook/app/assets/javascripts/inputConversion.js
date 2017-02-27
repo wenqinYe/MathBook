@@ -25,24 +25,25 @@ function infixToPostfix(infix) {
   var prevIsNumber = false; //was the prev character a number/decimal
   while (i < infix.length) {
     var c = infix[i];
-
+    var setPrevIsNumber = false;//variable to set prevIsNumber to at the end of the for loop
+    //has to be delayed so that bottom code works
      if (isNumber(c) || c == "." ) {
       //test
        if(prevIsNumber){
-          q[q.length-1] += c;
+          q[q.length-1] += c;//for multi-digit numbers/decimal numbers
           }
        else{
          q.push(c);
        }
-      prevIsNumber = true;
-      //test
-      //q.push(c);
-    }
-    else{
-      prevIsNumber = false;
+      setPrevIsNumber = true;
     }
       if(isVariable(c)){
+        if(prevIsNumber){
+           q[q.length-1] += c;//for variables with coefficients (ie. 3x)
+       }
+        else{
        q.push(c);
+        }
        }else if (c == "(") {
 
       stack.push(c);
@@ -69,6 +70,7 @@ function infixToPostfix(infix) {
         stack.push(c);
       }
     }
+    prevIsNumber = setPrevIsNumber; //assignment is delayed
     i++;
   }
   while (stack.length > 0) {
@@ -124,6 +126,7 @@ function postfixToKatex(postfix) {
 
 $(document).on('input',
   function(event) {
+  //alert(isVariable("A"));
     var sIn = String($("#txtIn").val());
     katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
 
