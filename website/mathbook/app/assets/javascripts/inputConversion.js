@@ -32,29 +32,29 @@ function infixToPostfix(infix) {
   var i = 0; //index of string currently at
   var prevIsNumber = false; //was the prev character a number/decimal
   while (i < infix.length) {
-    var c = infix[i];
+    var char = infix[i];
     var setPrevIsNumber = false;//variable to set prevIsNumber to at the end of the for loop
     //has to be delayed so that bottom code works
-     if (isNumber(c) || c == "." ) {
+     if (isNumber(char) || c == "." ) {
        if(prevIsNumber){
           q[q.length-1] += c;//for multi-digit numbers/decimal numbers
           }
        else{
-         q.push(c);
+         q.push(char);
        }
       setPrevIsNumber = true;
     }
-      if(isVariable(c)){
+      if(isVariable(char)){
         if(prevIsNumber){
            q[q.length-1] += c;//for variables with coefficients (ie. 3x)
        }
         else{
-       q.push(c);
+       q.push(char);
         }
-       }else if (c == "(") {
+       }else if (char == "(") {
          console.log("opening brace");
          stack.push(c);
-      } else if (c == ")") {
+      } else if (char == ")") {
       var item = stack[stack.length - 1];
       while (item != "(") {
         q.push(item); //push operator into output q
@@ -67,14 +67,14 @@ function infixToPostfix(infix) {
       }
       stack.splice(stack.length - 1, 1); //remove left bracket from stack
     } else {
-      var p1 = getPrecedence(c);
+      var p1 = getPrecedence(char);
       if (p1 != -1) { //if c is an operator
-        while (c != "^" && stack.length > 0 && p1 <= getPrecedence(stack[stack.length - 1])) {
+        while (char != "^" && stack.length > 0 && p1 <= getPrecedence(stack[stack.length - 1])) {
           q.push(stack[stack.length - 1]);
           stack.splice(stack.length - 1, 1); //remove at last index, remove 1 item
 
         }
-        stack.push(c);
+        stack.push(char);
       }
     }
     prevIsNumber = setPrevIsNumber; //assignment is delayed
@@ -96,20 +96,20 @@ function postfixToKatex(postfix) {
   console.log(postfix);
   var items = [];
   for (var i = 0; i < postfix.length; i++) {
-    var c = postfix[i];
-    if (isVariable(c)) {
-      items.push(c);
+    var char = postfix[i];
+    if (isVariable(char)) {
+      items.push(char);
     }
-    else if (isNumber(c) || c == ".") {
-      items.push(c);
+    else if (isNumber(char) || char == ".") {
+      items.push(char);
     }
     //items.push(c);
-    else if (getPrecedence(c) != -1) { //is operator
+    else if (getPrecedence(char) != -1) { //is operator
       if (items.length >= 2) { //there should be 2 or more terms to operate on
         var item1 = items[items.length - 2];
         var item2 = items[items.length - 1];
         var nItem;
-        if (c == "/") {
+        if (char == "/") {
           //escape back slash by putting 2
           nItem = "\\frac{" + item1 + "}{" + item2 + "}";
         } else {
@@ -119,7 +119,7 @@ function postfixToKatex(postfix) {
         items.push(nItem);
       } else {  //there is an operator but less than 2 items to operate on
         if(c != "^"){
-          items.push(c); //just put it on in case user just hasnt finished typing
+          items.push(char); //just put it on in case user just hasnt finished typing
         } else { //handle the fact that there is exponent but not enough to op on
 
         }
