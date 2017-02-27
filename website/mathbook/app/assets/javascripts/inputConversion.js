@@ -35,9 +35,9 @@ function infixToPostfix(infix) {
     var char = infix[i];
     var setPrevIsNumber = false;//variable to set prevIsNumber to at the end of the for loop
     //has to be delayed so that bottom code works
-     if (isNumber(char) || c == "." ) {
+     if (isNumber(char) || char == "." ) {
        if(prevIsNumber){
-          q[q.length-1] += c;//for multi-digit numbers/decimal numbers
+          q[q.length-1] += char;//for multi-digit numbers/decimal numbers
           }
        else{
          q.push(char);
@@ -46,7 +46,7 @@ function infixToPostfix(infix) {
     }
       if(isVariable(char)){
         if(prevIsNumber){
-           q[q.length-1] += c;//for variables with coefficients (ie. 3x)
+           q[q.length-1] += char;//for variables with coefficients (ie. 3x)
        }
         else{
        q.push(char);
@@ -113,7 +113,7 @@ function postfixToKatex(postfix) {
           //escape back slash by putting 2
           nItem = "\\frac{" + item1 + "}{" + item2 + "}";
         } else {
-          nItem = "{" + item1 +"}"+ c + "{" + item2 + "}";
+          nItem = "{" + item1 +"}"+ char + "{" + item2 + "}";
         }
         items.splice(items.length - 2, 2);
         items.push(nItem);
