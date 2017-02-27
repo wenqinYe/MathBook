@@ -4,3 +4,14 @@
 <input id="txtIn">
 
 </input>
+
+<h3> Text editor </h3>
+<div id="editor">
+
+</div>
+<script>
+  var editor = new Quill("#editor", {
+    modules: {toolbar: "#toolbar"},
+    theme: 'snow'
+  });
+</script>

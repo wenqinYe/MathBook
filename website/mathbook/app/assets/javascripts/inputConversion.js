@@ -1,3 +1,11 @@
+// The goal is to keep the values after the ^ operator
+// together until the user hits enter. Therefore an operator
+// is necessary to represent when the user hits enter so that
+// the postfixToKatex function knows to keep everything before the
+// enter together.
+// I picked a random ascii character to represent enter (a smiley face)! :)
+const enterOperatorChar = "☺"
+
 function isNumber(str) {
   return !isNaN(str);
 }
@@ -28,7 +36,6 @@ function infixToPostfix(infix) {
     var setPrevIsNumber = false;//variable to set prevIsNumber to at the end of the for loop
     //has to be delayed so that bottom code works
      if (isNumber(c) || c == "." ) {
-      //test
        if(prevIsNumber){
           q[q.length-1] += c;//for multi-digit numbers/decimal numbers
           }
@@ -45,9 +52,9 @@ function infixToPostfix(infix) {
        q.push(c);
         }
        }else if (c == "(") {
-
-      stack.push(c);
-    } else if (c == ")") {
+         console.log("opening brace");
+         stack.push(c);
+      } else if (c == ")") {
       var item = stack[stack.length - 1];
       while (item != "(") {
         q.push(item); //push operator into output q
@@ -72,12 +79,12 @@ function infixToPostfix(infix) {
     }
     prevIsNumber = setPrevIsNumber; //assignment is delayed
     i++;
+    console.log(stack);
   }
   while (stack.length > 0) {
     q.push(stack[stack.length - 1]);
     stack.splice(stack.length - 1, 1);
   }
-  console.log("q size :" + q.length);
   return q;
   //return q.join("");
 
@@ -85,6 +92,8 @@ function infixToPostfix(infix) {
 
 //postfix is AN ARRAY of strings, NOT just STRING
 function postfixToKatex(postfix) {
+  console.log("-------")
+  console.log(postfix);
   var items = [];
   for (var i = 0; i < postfix.length; i++) {
     var c = postfix[i];
@@ -103,24 +112,22 @@ function postfixToKatex(postfix) {
         if (c == "/") {
           //escape back slash by putting 2
           nItem = "\\frac{" + item1 + "}{" + item2 + "}";
-        }
-       else {
+        } else {
           nItem = "{" + item1 +"}"+ c + "{" + item2 + "}";
         }
         items.splice(items.length - 2, 2);
         items.push(nItem);
       } else {  //there is an operator but less than 2 items to operate on
         if(c != "^"){
-        items.push(c); //just put it on in case user just hasnt finished typing
-      }
-        else{ //handle the fact that there is exponent but not enough to op on
+          items.push(c); //just put it on in case user just hasnt finished typing
+        } else { //handle the fact that there is exponent but not enough to op on
 
         }
         console.log("Error: postfixToKatex does not have numbers to operate on");
       }
     }
+    console.log(items);
   }
-  console.log(items.length);
   return items.join("");
 }
 
