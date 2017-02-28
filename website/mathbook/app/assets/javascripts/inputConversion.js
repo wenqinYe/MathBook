@@ -4,7 +4,9 @@
 // the postfixToKatex function knows to keep everything before the
 // enter together.
 // I picked a random ascii character to represent enter (a smiley face)! :)
-const enterOperatorChar = "☺"
+//const enterOperatorChar = "☺"
+const invOpenBracket = "☺"; //character for invisible opening bracket '('
+const invCloseBracket = "☹";//character for invisible closing bracket ')'
 
 function isNumber(str) {
   return !isNaN(str);
@@ -51,12 +53,14 @@ function infixToPostfix(infix) {
         else{
        q.push(char);
         }
-       }else if (char == "(") {
+       }else if (char == "(" || char == invOpenBracket) {
          console.log("opening brace");
          stack.push(char);
-      } else if (char == ")") {
+      } else if (char == ")" || char == invCloseBracket) {
       var item = stack[stack.length - 1];
-      while (item != "(") {
+      //make sure invCloseBracket matches with InvOpenBracket, NOT JUST normal bracket
+      var openBracket = char == ")"? "(" : invOpenBracket;
+      while (item != openBracket) {
         q.push(item); //push operator into output q
         stack.splice(stack.length - 1, 1); //remove from stack
         item = stack[stack.length - 1];
@@ -64,6 +68,9 @@ function infixToPostfix(infix) {
           console.log("Mismatch brackets");
           break;
         }
+      }
+    if(char == ")"){  //i.e. if it is NOT the invisible bracket
+        q.push(")");  //SIGNALS that previous operation MUST have brackets around it for outputted text
       }
       stack.splice(stack.length - 1, 1); //remove left bracket from stack
     } else {
@@ -85,6 +92,7 @@ function infixToPostfix(infix) {
     q.push(stack[stack.length - 1]);
     stack.splice(stack.length - 1, 1);
   }
+ // alert(q.join(" "));
   return q;
   //return q.join("");
 
@@ -97,6 +105,9 @@ function postfixToKatex(postfix) {
   var items = [];
   for (var i = 0; i < postfix.length; i++) {
     var char = postfix[i];
+    if(char == ")"){//TEST; wrap brackets last item
+       items[items.length -1] = "(" + items[items.length -1]+")";
+       }
     if (isVariable(char)) {
       items.push(char);
     }
@@ -130,11 +141,32 @@ function postfixToKatex(postfix) {
   }
   return items.join("");
 }
+function preprocessInput(str){//preprocess means inserting invisible brackets
 
-// $(document).on('input',
-//   function(event) {
-//   //alert(isVariable("A"));
-//     var sIn = String($("#txtIn").val());
-//     katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
-//
-//   });
+  var nBrackets = 0;
+  for(var i = 0; i < str.length; i ++){
+    var char = str[i];
+    if(char == "^" || char == "/"){
+       str = str.substring(0, i+1) + invOpenBracket + str.substring(i+1, str.length);//insert bracket and update index
+      i += 1;
+      nBrackets ++;
+    }
+    else if(char == "\n" && nBrackets > 0){//only close bracket if there is at least 1 opening bracket
+       str = str.substring(0, i) + invCloseBracket + str.substring(i+1, str.length);
+      nBrackets--;//opening bracket is now closed
+      //alert("replaced: " + str);
+       }
+  }
+  //alert(str);
+  return str;
+  //var bracketIndex = str.replace(/\t|\n/, ")");//match tabs or newline
+
+}
+$(document).on('input',
+  function(event) {
+
+    var sIn = String($("#txtIn").val());
+    sIn = preprocessInput(sIn);
+    katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
+
+  });
