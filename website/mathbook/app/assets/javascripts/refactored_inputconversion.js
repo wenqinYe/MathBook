@@ -40,7 +40,7 @@ function MathFormatter() {
       return "\\frac{" + item1 + "}{" + item2 + "}"
     }
     this.routine["^"] = function(item1, item2){
-      return item1 + "^" + item2
+      return "{" + item1 +  "}^{" + item2 +"}";
     }
     this.routine["NONE"] = function(item1, item2){
 }
