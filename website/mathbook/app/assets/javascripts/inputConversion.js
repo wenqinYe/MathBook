@@ -162,11 +162,11 @@ function preprocessInput(str){//preprocess means inserting invisible brackets
   //var bracketIndex = str.replace(/\t|\n/, ")");//match tabs or newline
 
 }
-$(document).on('input',
-  function(event) {
-
-    var sIn = String($("#txtIn").val());
-    sIn = preprocessInput(sIn);
-    katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
-
-  });
+// $(document).on('input',
+//   function(event) {
+//
+//     var sIn = String($("#txtIn").val());
+//     sIn = preprocessInput(sIn);
+//     katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
+//
+//   });
