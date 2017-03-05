@@ -1,5 +1,4 @@
-const invOpenBracket = "☺"; //character for invisible opening bracket '('
-const invCloseBracket = "☹";//character for invisible closing bracket ')'
+
 
 function isNumber(str) {
   return !isNaN(str);
@@ -7,6 +6,11 @@ function isNumber(str) {
 
 function isVariable(str) {
   return str.search("[a-z]|[A-Z]") != -1;
+}
+
+function isOperator(str){
+  var operators = ["*", "/", "^", "+", "-", "{", "}", "☺", "☹"]
+  return operators.indexOf(str) > -1;
 }
 
 function getPrecedence(str) {
@@ -28,10 +32,10 @@ function MathFormatter() {
     //gives formatting routine for a given operator
     this.routine = {};
     this.routine["+"] = function(item1, item2){
-      return "{" + item1 + "}" + "+" + "{" + item2 + "}";
+      return  item1  + "+"  + item2 ;
     }
     this.routine["-"] =  function(item1, item2){
-      return "{" + item1 + "}" + "-" + "{" + item2 + "}"
+      return item1  + "-" + item2
     }
     this.routine["*"] = function(item1, item2){
       return item1 + "\\cdot " + item2
@@ -65,117 +69,85 @@ MathFormatter.prototype.preprocessInput = function(str) {
   return str;
 }
 
-  /*
-  * Instance methods
+MathFormatter.prototype.tokenize = function(str){
+  //group bracketed text together
+  // Example: {3x+2}/{3+7}+4
+  // turns into: "3x+2", "/", "3+7", "+", "4"
+  arr = str.replace(/\s/g, '').split("{")
+  new_arr = []
+  for (var i = 0; i < arr.length; i++){
+    new_arr = new_arr.concat(arr[i].split("}"))
+  }
+  if(new_arr[0]==="" || new_arr[0]===undefined){
+    new_arr.splice(0, 1);
+  }
+
+  if(new_arr[new_arr.length-1]==="" || new_arr[new_arr.length-1]===undefined){
+    console.log("blank");
+    new_arr.splice(new_arr.length-1, 1);
+  }
+  //remove the trailing and ending whitespaces
+  return new_arr;
+}
+
+/**
+* The function converts a postfix string into kaTeX
+* @param postfix - a postfix array
+* @return items - formatted Katex
+*/
+MathFormatter.prototype.postfixToKatex = function(postfix) {
+  console.log("-------")
+  console.log(postfix);
+  var items = [];
+  for (var i = 0; i < postfix.length; i++) {
+    var char = postfix[i];
+    console.log('----')
+    console.log(char)
+    console.log(isOperator(char))
+    //items.push(c);
+    if (isOperator(char)) { //is operator
+      if (items.length >= 2) { //there should be 2 or more terms to operate on
+        var item2 = items.pop()
+        var item1 = items.pop()
+        var nItem = this.routine[char](item1, item2);
+        items.push(nItem);
+      } else {  //there is an operator but less than 2 items
+        console.log("error operator doesn't have matching numbers");
+      }
+    } else {
+      items.push(char);
+    }
+  }
+  return items.join("");
+}
+
+  /**
+  * The function converts an infix string into reverse
+  * polish notation.
+  * @param infix - Expected to be a tokenized infix array
+  * @return queue - A reverse polish notation array
   */
-  //postfix is AN ARRAY of strings, NOT just STRING
-  MathFormatter.prototype.postfixToKatex = function(postfix) {
-    console.log("-------")
-    console.log(postfix);
-    var items = [];
-    for (var i = 0; i < postfix.length; i++) {
-      var char = postfix[i];
-      if(char == ")"){//TEST; wrap brackets last item
-         items[items.length -1] = "(" + items[items.length -1]+")";
-         }
-      if (isVariable(char)) {
-        items.push(char);
-      }
-      else if (isNumber(char) || char == ".") {
-        items.push(char);
-      }
-      //items.push(c);
-      else if (getPrecedence(char) != -1) { //is operator
-        if (items.length >= 2) { //there should be 2 or more terms to operate on
-          var item1 = items[items.length - 2];
-          var item2 = items[items.length - 1];
-          var nItem = this.routine[char](item1, item2);
-          items.splice(items.length - 2, 2);
-          items.push(nItem);
-        } else {  //there is an operator but less than 2 items to operate on
-          if(c != "^"){
-            items.push(char); //just put it on in case user just hasnt finished typing
-          } else { //handle the fact that there is exponent but not enough to op on
-
-          }
-          console.log("Error: postfixToKatex does not have numbers to operate on");
-        }
-      }
-      console.log(items);
-    }
-    return items.join("");
-  }
-
   MathFormatter.prototype.infixToPostfix = function(infix){
-    infix = infix.replace(/\s/g, ''); //remove all whitespace
-    var q = [];
-    var stack = [];
+    var output_queue = []; //output queue
+    var operator_stack = []; //operator stack
     var i = 0; //index of string currently at
-    var prevIsNumber = false; //was the prev character a number/decimal
-    while (i < infix.length) {
-      var char = infix[i];
-      var setPrevIsNumber = false;//variable to set prevIsNumber to at the end of the for loop
-      //has to be delayed so that bottom code works
-       if (isNumber(char) || char == "." ) {
-         if(prevIsNumber){
-            q[q.length-1] += char;//for multi-digit numbers/decimal numbers
-            }
-         else{
-           q.push(char);
-         }
-        setPrevIsNumber = true;
-      }
-        if(isVariable(char)){
-          if(prevIsNumber){
-             q[q.length-1] += char;//for variables with coefficients (ie. 3x)
-         }
-          else{
-         q.push(char);
-          }
-         }else if (char == "(" || char == invOpenBracket) {
-           console.log("opening brace");
-           stack.push(char);
-        } else if (char == ")"|| char == invCloseBracket) {
-        var item = stack[stack.length - 1];
-        //make sure invCloseBracket matches with InvOpenBracket, NOT JUST normal bracket
-        var openBracket = char == ")"? "(" : invOpenBracket;
-        while (item != openBracket) {
-          q.push(item); //push operator into output q
-          stack.splice(stack.length - 1, 1); //remove from stack
-          item = stack[stack.length - 1];
-          if (stack.length < 1) {
-            console.log("Mismatch brackets");
-            break;
-          }
-        }
-        if(char == ")"){  //i.e. if it is NOT the invisible bracket
-            q.push(")");  //SIGNALS that previous operation MUST have brackets around it for outputted text
-          }
-        stack.splice(stack.length - 1, 1); //remove left bracket from stack
-      } else {
-        var p1 = getPrecedence(char);
-        if (p1 != -1) { //if c is an operator
-          while (char != "^" && stack.length > 0 && p1 <= getPrecedence(stack[stack.length - 1])) {
-            q.push(stack[stack.length - 1]);
-            stack.splice(stack.length - 1, 1); //remove at last index, remove 1 item
 
-          }
-          stack.push(char);
-        }
-      }
-      prevIsNumber = setPrevIsNumber; //assignment is delayed
-      i++;
-      console.log(stack);
-    }
-    while (stack.length > 0) {
-      q.push(stack[stack.length - 1]);
-      stack.splice(stack.length - 1, 1);
-    }
-    return q;
+    for(var i = 0; i < infix.length; i++){
+       var char = infix[i];
+       if (isOperator(char)){
+         operator = operator_stack.pop()
+         if(operator !== undefined){output_queue.push(operator)}
+         operator_stack.push(char);
+       } else {
+         output_queue.push(char);
+       }
+     }
+
+    //add back the leftover operator
+    output_queue.push(operator_stack.pop());
+    return output_queue;
     //return q.join("");
-
   }
-
 }
 
 
@@ -184,8 +156,13 @@ $(document).on('input',
   function(event) {
     var m = new MathFormatter()
   //alert(isVariable("A"));
+  console.log("input");
     var sIn = String($("#txtIn").val());
-    sIn = m.preprocessInput(sIn);
+    // sIn = m.preprocessInput(sIn);
+    sIn  = m.tokenize(sIn);
+    console.log('here:');
+    console.log(sIn);
+    console.log(m.infixToPostfix(sIn));
     katex.render(m.postfixToKatex(m.infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
 
   });
