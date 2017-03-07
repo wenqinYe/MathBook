@@ -1,12 +1,4 @@
-// The goal is to keep the values after the ^ operator
-// together until the user hits enter. Therefore an operator
-// is necessary to represent when the user hits enter so that
-// the postfixToKatex function knows to keep everything before the
-// enter together.
-// I picked a random ascii character to represent enter (a smiley face)! :)
-//const enterOperatorChar = "☺"
-const invOpenBracket = "☺"; //character for invisible opening bracket '('
-const invCloseBracket = "☹";//character for invisible closing bracket ')'
+
 
 function isNumber(str) {
   return !isNaN(str);
@@ -167,6 +159,7 @@ function preprocessInput(str){//preprocess means inserting invisible brackets
 //
 //     var sIn = String($("#txtIn").val());
 //     sIn = preprocessInput(sIn);
+//     console.log(infixToPostfix(sIn));
 //     katex.render(postfixToKatex(infixToPostfix(sIn)), $("#divOut").get(0)); //get(0) same as get docelembyid
 //
 //   });
