@@ -124,25 +124,7 @@ function MathFormatter() {
         return output_queue;
         //return q.join("");
     }
+    
 
-    MathFormatter.prototype.recursvieBracketsParser = function(str){
-      var output_queue = [];
-      var bracketStack = [];
-      for(var i = 0; i < str.length; i++){
-        char = str[i]
-        if(char === "{"){
-          bracketStack.push(char)
-        }else if (char==="}"){
-          bracketStack.pop()
-        }else{
-          if (bracketStack[0] === undefined) {
-            output_queue.push(char);
-          }
-            output_queue[output_queue.length-1] += char
-          }
-        }
-
-        console.log(output_queue)
-      }
 
 }

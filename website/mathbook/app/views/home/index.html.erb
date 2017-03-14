@@ -6,12 +6,29 @@
 </textarea>
 
 <h3> Text editor </h3>
-<div id="editor">
+<div id="toolbar-container">
+  <select class="ql-font">
+    <option selected>Aref Ruqaa</option>
+    <option value="mirza">Mirza</option>
+    <option value="roboto">Roboto</option>
+  </select>
+</div>
+
+<div id="editor-container">
+  <p> To be or not ot be </p>
+</div>
+
+<div class="center squeeze">
+<h2> <b> Problem Set </b> </h2>
+<p> Geometry and more specifically the geometry of the circle represents an area of mathematics from which relatively
+difficult and interesting problems for the Euclid contest are frequently taken. Although this is a very broad content
+area, we present only a brief outline of some of the more elementary results of the geometry of the circle. We will
+assume that the student has some knowledge of the elementary properties of triangles, including congruence and similarity,
+as well as the properties of parallelograms, rhombi and trapezoids that follow from these properties of triangles. </p>
+<ol>
+  <li>Show that if the chord AB is a diameter then ∠ACB = 90◦
+. (The angle subtended by a diameter is a right
+angle).</li>
+</ol>
 
 </div>
-<script>
-  var editor = new Quill("#editor", {
-    modules: {toolbar: "#toolbar"},
-    theme: 'snow'
-  });
-</script>
