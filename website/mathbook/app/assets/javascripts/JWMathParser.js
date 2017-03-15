@@ -153,17 +153,39 @@ function JWMathParser() {
     }
 
     this.isAlphabeticalCharacter = function(str) {
-      return /^[a-zA-Z()]+$/.test(str);
+        return /^[a-zA-Z()]+$/.test(str);
     }
 
     this.popNonEmpty = function(stack) {
-      var output = stack.pop();
-      console.log(output)
-      while(output !== undefined && output === ""){
         var output = stack.pop();
-      }
-      return output
+        while (output !== undefined && output === "") {
+            var output = stack.pop();
+        }
+        return output
     }
+
+    function parseNumbers(str) {
+        var out = [];
+        var isNumber = false;
+        var number = "";
+        for (var i = 0; i < str.length; i++) {
+            var c = str[i];
+            if (!isNaN(c) || c == ".") { // if current is a number OR has a decimal place
+                number += c;
+            } else { //not a number/decimal, just add onto output, clear out number
+                if (number != "") {
+                    out.push(number);
+                    number = "";
+                }
+                out.push(c);
+            }
+        }
+        if (number != "") { //in case last thing is a number
+            out.push(number);
+        }
+        return out;
+    }
+
 
     /**
      * Takes a bracketed math string, and splits it into
@@ -187,7 +209,7 @@ function JWMathParser() {
         //they are the same
         stack.push(output)
         var current = output; //stays on the current nested array
-        var str = str.split("");
+        var str = parseNumbers(str); //keeps digits together compared to str.split("")
 
         for (var i = 0; i < str.length; i++) {
             current = stack[stack.length - 1];
@@ -203,22 +225,11 @@ function JWMathParser() {
                 //the bracket doesn't interfere with the next character
                 current.push("")
             } else {
-                console.log(current)
-                if ((this.isNumber(str[i]) || this.isAlphabeticalCharacter(str[i])) && !this.isOperator(current[current.length-1])) {
-                    console.log("adding to top: " + str[i])
-                    var top = current.pop() || ""
-                    current.push(top += str[i])
-                } else {
-                    current.push(str[i]);
-                }
-                //current.push(str[i]);
-              }
+                current.push(str[i]);
+            }
         }
-        console.log("output before tokenizing")
-        console.log(output)
+
         output = this.tokenizeKeywords(output)
-        console.log("tokenized output")
-        console.log(output)
         return output
     }
 
@@ -266,7 +277,7 @@ function JWMathParser() {
         var match = true;
         var split_keyword = keyword.split("");
         for (var j = 0; j < split_keyword.length; j++) {
-            if (char_array[index + j] !== split_keyword[j].trim() ) {
+            if (char_array[index + j] !== split_keyword[j].trim()) {
                 match = false;
             }
         }
