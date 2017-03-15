@@ -1,8 +1,14 @@
 function JWMathParser() {
 
     this.routine = {};
+    this.routine["->"] = function(item1, item2) {
+        return [item1, " \\to ", item2]
+    }
     this.routine["="] = function(item1, item2) {
         return item1 + "=" + item2
+    }
+    this.routine[">"] = function(item1, item2) {
+        return item1 + ">" + item2
     }
     this.routine["+"] = function(item1, item2) {
         return item1 + "+" + item2
@@ -46,9 +52,6 @@ function JWMathParser() {
     }
     this.routine["sum"] = function(item1, item2) {
         return [item1, " \\sum", item2]
-    }
-    this.routine["->"] = function(item1, item2) {
-        return [item1, " \\to ", item2]
     }
     this.routine["to"] = function(item1, item2) {
         return [item1, " \\to ", item2]
@@ -149,6 +152,10 @@ function JWMathParser() {
         return !isNaN(str);
     }
 
+    this.isAlphabeticalCharacter = function(str) {
+      return /^[a-zA-Z()]+$/.test(str);
+    }
+
     this.popNonEmpty = function(stack) {
       var output = stack.pop();
       console.log(output)
@@ -196,17 +203,22 @@ function JWMathParser() {
                 //the bracket doesn't interfere with the next character
                 current.push("")
             } else {
-                //keep numbers together
-                if (!this.isOperator(str[i]) && !this.isOperator(current[current.length-1])) {
+                console.log(current)
+                if ((this.isNumber(str[i]) || this.isAlphabeticalCharacter(str[i])) && !this.isOperator(current[current.length-1])) {
+                    console.log("adding to top: " + str[i])
                     var top = current.pop() || ""
                     current.push(top += str[i])
                 } else {
                     current.push(str[i]);
                 }
-                // current.push(str[i]);
-            }
+                //current.push(str[i]);
+              }
         }
+        console.log("output before tokenizing")
+        console.log(output)
         output = this.tokenizeKeywords(output)
+        console.log("tokenized output")
+        console.log(output)
         return output
     }
 
@@ -218,11 +230,11 @@ function JWMathParser() {
      * with no number beside it.
      */
     this.formattedToKatex = function(tokenized_array) {
+        if (tokenized_array == undefined || tokenized_array.length == 1) {
+            return tokenized_array;
+        }
         if (tokenized_array.constructor == String) {
             return [tokenized_array]
-        }
-        if (tokenized_array.length == 1 || tokenized_array == undefined) {
-            return tokenized_array;
         }
 
         var output = [];
@@ -234,7 +246,6 @@ function JWMathParser() {
                 output.push(this.formattedToKatex(token))
             } else if (this.isOperator(token)) {
                 var previous = this.popNonEmpty(output) || ""
-                console.log(previous)
                 var after = this.formattedToKatex(queue.splice(0, 1)[0]) || "";
                 var result = this.routine[token](previous, after);
                 output = output.concat(result);
@@ -255,7 +266,7 @@ function JWMathParser() {
         var match = true;
         var split_keyword = keyword.split("");
         for (var j = 0; j < split_keyword.length; j++) {
-            if (char_array[index + j] !== split_keyword[j]) {
+            if (char_array[index + j] !== split_keyword[j].trim() ) {
                 match = false;
             }
         }
