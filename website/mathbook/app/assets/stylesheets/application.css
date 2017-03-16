@@ -1,0 +1,23 @@
+body{
+  font-size: 18px;
+  font-family: arial;
+}
+
+
+.equation-input{
+  margin: 0 auto;
+  display: block;
+  font-size: 18px !important;
+  width: 617px;
+  padding: 10px;
+
+  border: 1px solid #6B7F91;
+  outline: none;
+}
+
+.math-output{
+  text-align: center;
+  width: 100%;
+  wdith: 617px;
+  padding: 5px;
+}

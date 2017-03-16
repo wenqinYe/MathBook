@@ -1,132 +1,6 @@
 function JWMathParser() {
 
     this.routine = {};
-    this.routine["->"] = function(item1, item2) {
-        return [item1, " \\to ", item2]
-    }
-    this.routine["="] = function(item1, item2) {
-        return item1 + "=" + item2
-    }
-    this.routine[">"] = function(item1, item2) {
-        return item1 + ">" + item2
-    }
-    this.routine["+"] = function(item1, item2) {
-        return item1 + "+" + item2
-    }
-    this.routine["-"] = function(item1, item2) {
-        return item1 + "-" + item2
-    }
-    this.routine["*"] = function(item1, item2) {
-        return item1 + "\\cdot " + item2
-    }
-    this.routine["/"] = function(item1, item2) {
-        return "\\frac{" + item1 + "}{" + item2 + "}"
-    }
-    this.routine["NONE"] = function(item1, item2) {}
-    this.routine["sqrt"] = function(item1, item2) {
-        return item1 + " \\sqrt{" + item2 + "}"
-    }
-    this.routine["delta"] = function(item1, item2) {
-        return item1 + "\\Delta" + item2
-    }
-    this.routine["integral"] = function(item1, item2) {
-        return item1 + "\\int " + item2
-    }
-    this.routine["pi"] = function(item1, item2) {
-        return item1 + " \\pi " + item2
-    }
-    this.routine["epsilon"] = function(item1, item2) {
-        return item1 + " \\varepsilon " + item2
-    }
-    this.routine["phi"] = function(item1, item2) {
-        return item1 + " \\varphi " + item2
-    }
-    this.routine["omega"] = function(item1, item2) {
-        return item1 + " \\Omega " + item2
-    }
-    this.routine["infty"] = function(item1, item2) {
-        return item1 + " \\infty " + item2
-    }
-    this.routine["infinity"] = function(item1, item2) {
-        return item1 + " \\infinity " + item2
-    }
-    this.routine["sum"] = function(item1, item2) {
-        return [item1, " \\sum", item2]
-    }
-    this.routine["to"] = function(item1, item2) {
-        return [item1, " \\to ", item2]
-    }
-    this.routine["sigma"] = function(item1, item2) {
-        return [item1, " \\sigma ", item2]
-    }
-    this.routine["pm"] = function(item1, item2) {
-        return [item1, " \\pm", item2]
-    }
-    this.routine["plus or minus"] = function(item1, item2) {
-        return [item1, " \\pm", item2]
-    }
-    this.routine["plusorminus"] = function(item1, item2) {
-        return [item1, " \\pm", item2]
-    }
-    this.routine["plusminus"] = function(item1, item2) {
-        return item1 + " \\pm " + item2
-    }
-    this.routine["partial"] = function(item1, item2) {
-        return item1 + " \\partial " + item2
-    }
-
-    /* This causes some bugs with the tokenizign function */
-    // this.routine["↵"] = function(item1, item2) {
-    //     return item1 + " \\newline " + item2
-    // }
-
-    this.routine["=>"] = function(item1, item2) {
-        return item1 + " \\Rightarrow " + item2
-    }
-    this.routine["implies"] = function(item1, item2) {
-        return item1 + " \\Rightarrow " + item2
-    }
-    this.routine["sin"] = function(item1, item2) {
-        return item1 + " \\sin " + item2
-    }
-    this.routine["cos"] = function(item1, item2) {
-        return item1 + " \\cos " + item2
-    }
-    this.routine["tan"] = function(item1, item2) {
-        return item1 + " \\tan " + item2
-    }
-    this.routine["lim"] = function(item1, item2) {
-        return item1 + " \\lim " + item2
-    }
-    this.routine["lim"] = function(item1, item2) {
-        return item1 + " \\lim " + item2
-    }
-    this.routine["hat"] = function(item1, item2) {
-        return "\\hat " + item1 + " " + item2
-    }
-    this.routine["xi"] = function(item1, item2) {
-        return item1 + " \\xi " + item2
-    }
-    this.keywords = ["/", "sqrt", "delta", "int", "integral", "infinity", "pi", "infty", "epsilon", "phi", "sum", "omega", "->", "sigma", "pm", "plus or minus", "plusminus", "plusorminus", "partial", "=>", "implies", "sin", "tan", "cos", "lim", "limit", "to", "hat", "xi", "beta", "alpha", "gamma"]
-
-
-    /** Mathematical notation **/
-    this.routine["int"] = function(item1, item2) {
-        return item1 + "\\int" + item2
-    }
-
-
-    /** Greek Symbols **/
-    this.routine["alpha"] = function(item1, item2) {
-        return item1 + "\\alpha" + item2
-    }
-    this.routine["beta"] = function(item1, item2) {
-        return item1 + "\\beta" + item2
-    }
-    this.routine["gamma"] = function(item1, item2) {
-        return item1 + "\\gamma" + item2
-    }
-
     /** Standard Operations **/
     this.routine["^"] = function(item1, item2) {
         return item1 + "^" + "{" + item2 + "}"
@@ -134,10 +8,180 @@ function JWMathParser() {
     this.routine["_"] = function(item1, item2) {
         return item1 + "_" + "{" + item2 + "}"
     }
-
-    this.isOperator = function(str) {
-        return this.routine[str] !== undefined;
+    this.routine["/"] = function(item1, item2) {
+        return "\\frac{" + item1 + "}{" + item2 + "}"
     }
+    this.routine["sqrt"] = function(item1, item2) {
+        return item1 + " \\sqrt{" + item2 + "} "
+    }
+
+    /* Text is kind of broken right now */
+    // this.routine["text"] = function(item1, item2) {
+    //     return item1 + " \\text{" + item2 + "} "
+    // }
+
+    this.keywordKatexEquivalent = {
+      /**** Routines that we don't want to convert just yet ****/
+      "sqrt": "sqrt",
+      "text": "text",
+      "over": "/",
+
+
+      /****** Vectors *****/
+      "hat": " \\hat ",
+      "vec": " \\vec ",
+
+      /****** Calculus Operators*****/
+      "sum": " \\sum ",
+      "int": " \\int ",
+      "prod": " \\prod ",
+      "intint": " \\iint ",
+      "int int": " \\iint ",
+
+      /****** Greek Letters *****/
+      "delta": " \\Delta ",
+      "epsilon": " \\epsilon ",
+      "alpha": " \\alpha ",
+      "beta": " \\beta ",
+      "gamma": " \\gamma ",
+      "omega": " \\omega ",
+      "Omega": " \\Omega ",
+      "sigma": " \\omega ",
+      "Sigma": " \\sum ",
+
+      /****** Special Functions *****/
+      "lim": " \\lim ",
+      "limit": " \\lim ",
+      "sin": " \\sin ",
+      "cos": " \\cos",
+      "tan": " \\tan ",
+      "max": " \\max ",
+      "ln": " \\ln ",
+      "log": " \\log ",
+      "cot": " \\cot ",
+      "sec": " \\sec ",
+      "csc": " \\csc ",
+
+      /****** Special symbols and notation *****/
+      "*": " \\cdot ",
+      "choose": " \\choose ",
+
+      "times": " \\times ",
+      "dividedby": " \\div ",
+      "divide": " \\div ",
+
+      "plusminus": " \\pm ",
+      "plusrorminus": " \\pm ",
+      "pm": " \\pm ",
+
+      "minusplus": " \\mp ",
+      "minusorplus": " \\mp ",
+      "mp": " \\mp ",
+
+      "to": " \\to ",
+      "->": " \\to ",
+      "=>": " \\Rightarrow ",
+      "implies": " \\Rightarrow ",
+
+      // Not doesn't work...
+      // "not": "\\not",
+
+      // \cup \cap \setminus \subset \subseteq \subsetneq \supset \in \notin \emptyset \varnothing
+      "union": " \\cup ",
+      "cup": " \\cup ",
+      //intersection doesn't work algorithm thinks it's "int" and "sec"
+      "intersection": " \\cap",
+      "cap": " \\cap ",
+      "for": " \ | \ ",
+      "suchthat": " \ | \ ",
+      "set": " \\in ",
+      "setof": " \\in ",
+      "in": " \\in ",
+      "emptyset": " \\emptyset ",
+      "empty": " \\emptyset ",
+
+
+      // \land \lor \lnot \forall \exists \top \bot \vdash \vDash
+      "land": " \\land ",
+      "lor": " \\lor ",
+      "forall": " \\forall ",
+      "not ": " \\not ",
+      "bot": " \\bot",
+      "perpendicular": " \\bot ",
+      "forall": " \\forall ",
+
+      // \approx \sim \simeq \cong \equiv \prec \lhd
+      "land": " \\land ",
+      "lor": " \\lor ",
+      "forall": " \\forall ",
+      "not ": " \\not ",
+      "bot": " \\bot",
+      "perpendicular": " \\bot ",
+      "forall": " \\forall ",
+
+      // nabla \partial
+      "nabla": " \\nabla ",
+      "partial": " \\partial ",
+      // \Im \Re
+      "imaginarynumbers": " \\Im ",
+      "im": " \\Im ",
+      "imaginary": " \\Im ",
+      "reals": " \\Re ",
+      "realnumbers": " \\Re ",
+      "real": " \\Re ",
+
+      // \infty \aleph_0
+      "infty": " \\infty ",
+      "infinity": " \\infty ",
+      "mod": " \\pmod ",
+      "equiv": " \\equiv ",
+      "equivalent": " \\equiv ",
+
+
+
+      /* Less than, greater than etc. */
+      "lesstahn": " \\lt ",
+      "greaterthan": " \\gt ",
+      "lt": " \\lt ",
+      "gt": " \\gt ",
+      "le": " \\le ",
+      "ge": " \\ge ",
+
+      /* Trig functions and log */
+      "tan": " \\tan ",
+      "max": " \\max ",
+      "ln": " \\ln ",
+      "log": " \\log ",
+      "cot": " \\cot ",
+      "sec": " \\sec ",
+      "csc": " \\csc ",
+
+      /* Brackets */
+      "(": " \\left( ",
+      ")": " \\right) ",
+      "[": " \\left[ ",
+      "]": " \\right] ",
+
+      "INVISIBLE_CLOSING_BRACKET": " \\right. "
+
+    }
+
+    /*
+    Sorting the keywrods is important because it ensures that
+    longer keywords are evaluated before shorter ones. If this
+    does not happen things like:  "logarithm" will be evaluated as
+    ["log", "a", "r", "i", "t", "h", "m"] instead of ["logarithm"]
+    because the code just sees "log" and stops.
+    */
+    this.keywords = [];
+    for(var keyword in this.keywordKatexEquivalent){
+      this.keywords.push(keyword);
+    }
+    //sort by character length in descending order
+    this.keywords.sort(function(a, b){
+      return b.length - a.length
+    });
+
 
 
     /** Brackets **/
@@ -156,6 +200,14 @@ function JWMathParser() {
         return /^[a-zA-Z()]+$/.test(str);
     }
 
+    this.isOperator = function(str) {
+        return this.routine[str] !== undefined;
+    }
+
+    this.isKeyword = function(str) {
+      return this.keywordKatexEquivalent[str] !== undefined;
+    }
+
     this.popNonEmpty = function(stack) {
         var output = stack.pop();
         while (output !== undefined && output === "") {
@@ -164,23 +216,23 @@ function JWMathParser() {
         return output
     }
 
-/** Do some stuff with the user's text before anything else happens.
-This function currently places curly brackets around round brackets
-**/
-    this.preProcess = function (str){
-      if(str !=undefined){
-        for(var i = 0; i < str.length; i++){
-          if(str[i] == "("){ //insert "{" to the left of "("
-            str = str.substring(0, i) + "{" + str.substring(i, str.length);
-            i++;
-          }
-          if(str[i] == ")"){//insert "}" to the right of ")"
-            str = str.substring(0, i+1) + "}" + str.substring(i+1, str.length);
-            i++;
-          }
+    /** Do some stuff with the user's text before anything else happens.
+    This function currently places curly brackets around round brackets
+    **/
+    this.preProcess = function(str) {
+        if (str != undefined) {
+            for (var i = 0; i < str.length; i++) {
+                if (str[i] == "(") { //insert "{" to the left of "("
+                    str = str.substring(0, i) + "{" + str.substring(i, str.length);
+                    i++;
+                }
+                if (str[i] == ")") { //insert "}" to the right of ")"
+                    str = str.substring(0, i + 1) + "}" + str.substring(i + 1, str.length);
+                    i++;
+                }
+            }
         }
-      }
-      return str;
+        return str;
     }
 
     function parseNumbers(str) {
@@ -228,14 +280,14 @@ This function currently places curly brackets around round brackets
         //they are the same
         stack.push(output)
         var current = output; //stays on the current nested array
-        var str = parseNumbers(str); //keeps digits together compared to str.split("")
+        var str = parseNumbers(str); //same as str.split("") but keeps digits of the same number together
 
         for (var i = 0; i < str.length; i++) {
             current = stack[stack.length - 1];
             if (str[i] == "{") {
                 current.push([]);
                 stack.push(current[current.length - 1]);
-                current = stack[stack.length - 1]
+                current = stack[stack.length - 1];
             } else if (str[i] == "}") {
                 stack.pop();
                 current = stack[stack.length - 1]
@@ -253,6 +305,45 @@ This function currently places curly brackets around round brackets
     }
 
     /*
+    This function converts keywords found in a tokenized array into its
+    katex representation.
+    Examples: ["int", "3", "x"] turns into:
+              ["\int", "3", "x"]
+    */
+    this.keywordsToKatex = function(tokenized_array){
+      /*
+      Keep track of possible missing brackets that the user
+      forgot to type so that they can
+      be closed with an invisible bracket
+      */
+      var bracketsTracker = [];
+
+      //convert keywords to their katex representation
+      for(var i = 0; i < tokenized_array.length; i++){
+        token = tokenized_array[i]
+        if(this.isKeyword(token)){
+          if(token === "(" || token == "{" || token == "["){
+            bracketsTracker.push(token)
+          }
+          if (token == ")" || token == "}" || token == "]"){
+            bracketsTracker.pop()
+          }
+          tokenized_array[i] = this.keywordKatexEquivalent[token]
+        }
+      }
+
+
+      //close un paired brackets with an invisible brackets
+      for(var i = 0; i < bracketsTracker.length; i++){
+        tokenized_array.push(this.keywordKatexEquivalent["INVISIBLE_CLOSING_BRACKET"])
+      }
+      console.log("tokenized array")
+      console.log(tokenized_array)
+
+      return tokenized_array;
+    }
+
+    /*
      * Assumes math follows the format:
      * number(s) operator number(s).
      *
@@ -267,22 +358,30 @@ This function currently places curly brackets around round brackets
             return [tokenized_array]
         }
 
+        tokenized_array = this.keywordsToKatex(tokenized_array);
+
         var output = [];
         var queue = tokenized_array;
+
+        var missingClosingBrackets = []; //keeps track of missing closing brackets
 
         while (queue.length > 0) {
             var token = queue.splice(0, 1)[0];
             if (token.constructor == Array) {
                 output.push(this.formattedToKatex(token))
+
             } else if (this.isOperator(token)) {
                 var previous = this.popNonEmpty(output) || ""
                 var after = this.formattedToKatex(queue.splice(0, 1)[0]) || "";
                 var result = this.routine[token](previous, after);
                 output = output.concat(result);
+
             } else {
                 output.push(token);
+
             }
         }
+        console.log(output.join(""))
         return "{" + output.join("") + "}";
     }
 
@@ -310,8 +409,9 @@ This function currently places curly brackets around round brackets
                 continue;
             }
             output.push(char_array[i])
+
             for (var j = 0; j < this.keywords.length; j++) {
-                var keyword = this.keywords[j]
+                var keyword = this.keywords[j];
                 var match = this.scanKeywordAtIndex(keyword, char_array, i);
                 if (match) {
                     output.pop()
@@ -324,6 +424,12 @@ This function currently places curly brackets around round brackets
         return output;
     }
 
+    this.convertText = function(mathString){
+      var preprocessedText = this.preProcess(mathString)
+      var tokenizedText = this.tokenize(preprocessedText)
+      return this.formattedToKatex(tokenizedText);
+    }
+
 }
 
 $(document).on('input',
@@ -334,14 +440,17 @@ $(document).on('input',
         console.log("tokenized")
         console.log(j.tokenize(sIn))
 
-        var formattedKatex = j.formattedToKatex(j.tokenize(sIn))
-        console.log(formattedKatex)
-        katex.render(formattedKatex, $("#divOut").get(0), {
-            displayMode: true
-        })
-    });
+        var formattedKatex = j.convertText(sIn)
+        // console.log(formattedKatex)
+        // katex.render(formattedKatex, $("#divOut").get(0), {
+        //     displayMode: true
+        // })
+        $("#divOut").html("$$" + formattedKatex + "$$")
 
-// m = new JWMathParser()
-// tokenized = m.tokenize("2+sqrt{3x+2+sqrt{2+y}+1}")
-// console.log(tokenized)
-// console.log(m.tokenizeKeywords(tokenized))
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "divOut"],
+          function() {
+    
+          });
+
+
+    });
