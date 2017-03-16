@@ -164,6 +164,25 @@ function JWMathParser() {
         return output
     }
 
+/** Do some stuff with the user's text before anything else happens.
+This function currently places curly brackets around round brackets
+**/
+    this.preProcess = function (str){
+      if(str !=undefined){
+        for(var i = 0; i < str.length; i++){
+          if(str[i] == "("){ //insert "{" to the left of "("
+            str = str.substring(0, i) + "{" + str.substring(i, str.length);
+            i++;
+          }
+          if(str[i] == ")"){//insert "}" to the right of ")"
+            str = str.substring(0, i+1) + "}" + str.substring(i+1, str.length);
+            i++;
+          }
+        }
+      }
+      return str;
+    }
+
     function parseNumbers(str) {
         var out = [];
         var isNumber = false;
