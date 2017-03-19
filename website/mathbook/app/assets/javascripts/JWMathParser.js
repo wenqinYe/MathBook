@@ -453,9 +453,23 @@ $(document).on('input',
             var svg = $(".MathJax_SVG svg")[0];
             if(svg){
               var svgData = new XMLSerializer().serializeToString( svg );
+              //get svg data into a temporary image
+              var imgSrc = "data:image/svg+xml;base64," + btoa( svgData);
 
+              var canvas = document.createElement('canvas');
+              context = canvas.getContext("2d");
 
+              var image = new Image;
+              image.src = imgSrc;
+
+              image.onload = function(){
+                context.drawImage(image, 0, 0);//draw the svg image on a canvas
+                var canvasdata = canvas.toDataURL("image/png");//get the canvas as png
+                $("#svg-img-out").attr("src", canvasdata); //set the png data in an img tag to display as png
+                canvas = null;
+              };
               $("#svg-img-out").attr("src",  "data:image/svg+xml;base64," + btoa( svgData ));
+
             }
           });
 
