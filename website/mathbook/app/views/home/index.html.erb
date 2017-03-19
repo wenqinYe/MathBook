@@ -4,18 +4,205 @@
   MathJax.Hub.Config({
   jax: ["input/MathML","output/SVG"],
   SVG: {
-    scale: 120,
+    scale: 100,
     useGlobalCache: false
   }
   });
 
 </script>
+
+<input class="equation-input" id="txtIn" autofocus>
+
+</input>
 <div class="mathjax-output" id="mathjax-output"></div>
 <div class="math-output-container">
   <img id="svg-img-out" class="svg-img-out" src="">
 
-  <div class="math-output" id = "divOut"> Type in Math Below (ex: sum_{i=0}^n i)</div>
+  <div class="math-output" id = "divOut"></div>
 </div>
-<input class="equation-input" id="txtIn">
 
-</input>
+<div id="mathjax-code-display">
+  <p> Latex: </p>
+  <div id="latex-code" class="code">
+
+  </div>
+</div>
+
+
+<div class="documentation">
+  <h2> Basics </h2>
+  <div class="section">
+    <p> Division /</p>
+    <p> Divides things </p>
+    <div class="code">
+      x+32/2
+    </div>
+    <div >
+      $$x+\frac{32}{2}$$
+    </div>
+  </div>
+
+  <div class="section">
+    <p> Invisible Brackets {} </p>
+    <p> Groups elements together </p>
+    <div class="code">
+      {x+32}/{2}
+    </div>
+    <div >
+      $$\frac{x+32}{2}$$
+    </div>
+  </div>
+  <div class="section">
+    <p> Visible Brackets () </p>
+    <p> Groups elements together too but are visible! </p>
+    <div class="code">
+      (x+32)/{2}
+    </div>
+    <div >
+      $$\frac{(x+32)}{2}$$
+    </div>
+  </div>
+
+  <div class="section">
+    <p> Superscripts and Exponents ^ </p>
+    <p> Puts an exponent (ensure to use brackets to group items you want in the exponent). </p>
+    <div class="code">
+      x^2
+    </div>
+    <div >
+      $$x^2$$
+    </div>
+    <div class="code">
+      x^{3x+2}
+    </div>
+    <div >
+      $$x^{3x+2}$$
+    </div>
+  </div>
+  <div class="section">
+    <p> Subscripts _ </p>
+    <p> Puts a subscript (ensure to use brackets to group items you want in the subscript). </p>
+    <div class="code">
+      (x+32)/{2}
+    </div>
+    <div >
+      $$\frac{x+32}{2}$$
+    </div>
+  </div>
+
+  <h2> Calculus </h2>
+  <div class="section">
+    <p> Limits lim </p>
+    <p> Groups elements together too but are visible! </p>
+    <div class="code">
+      lim_{h->0}
+    </div>
+    <div >
+      $$\lim_{h \to 0}$$
+    </div>
+  </div>
+
+  <div class="section">
+    <p> Lebiniz Derivative </p>
+    <div class="code">
+      {dy}/{dx}
+    </div>
+    <div >
+      $$\frac{dy}{dx}$$
+    </div>
+  </div>
+  <div class="section">
+    <p> Partial Derivative </p>
+    <div class="code">
+      {partialy}/{partialx}
+    </div>
+    <div >
+      $$\frac{\partial y}{\partial x}$$
+    </div>
+  </div>
+  <div class="section">
+    <p> Integration </p>
+    <div class="code">
+      int^{infty}_{0}f(x)
+    </div>
+    <div >
+      $${ \int _{0}^{ \infty }f{ \left( x \right) }}$$
+    </div>
+  </div>
+
+  <div class="section">
+    <p> Summation sum</p>
+    <p> Groups elements together too but are visible! </p>
+    <div class="code">
+      sum^{n}_{i=1}i = {n(n+1)}/2
+    </div>
+    <div >
+      $${ \sum ^{n}_{{i=1}}i = \frac{{n{ \left( n+1 \right) }}}{2}}$$
+    </div>
+  </div>
+
+  <h2> Chemistry </h2>
+  <div class="section">
+    <p> Ions </p>
+    <p> An ion  </p>
+    <div class="code">
+      H^{1+}_(g)
+    </div>
+    <div >
+      $$H^{1+}_{(g)}$$
+    </div>
+  </div>
+
+  <div class="section">
+    <p> Basic Chemical Equation </p>
+    <p> Basicl chemical equation </p>
+    <div class="code">
+      CH_{4(g)} + O_{2(g)} -> H_2O_{(g)} + CO_{2(g)}
+    </div>
+    <div>
+      $${CH_{{4{ \left( g \right) }}} + O_{{2{ \left( g \right) }}} \to H_{2}O_{{{ \left( g \right) }}} + CO_{{2{ \left( g \right) }}}}$$
+    </div>
+  </div>
+
+  <h2> Special characters</h2>
+  <div class="section">
+    <div class="code">
+      Delta
+    </div>
+    <div>
+      \(\Delta\)
+    </div>
+
+    <div class="code">
+      Omega
+    </div>
+    <div>
+      \(\Omega\)
+    </div>
+
+    <div class="code">
+      sigma
+    </div>
+    <div >
+      \(\sigma\)
+    </div>
+
+    <div class="code">
+      epsilon
+    </div>
+    <div >
+      \(\epsilon\)
+    </div>
+
+    <div class="code">
+      alpha
+    </div>
+    <div >
+      \(\alpha\)
+    </div>
+  </div>
+
+  </div>
+
+
+</div>

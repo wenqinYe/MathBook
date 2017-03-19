@@ -46,7 +46,7 @@ function JWMathParser() {
       "gamma": " \\gamma ",
       "omega": " \\omega ",
       "Omega": " \\Omega ",
-      "sigma": " \\omega ",
+      "sigma": " \\sigma ",
       "Sigma": " \\sum ",
 
       /****** Special Functions *****/
@@ -337,8 +337,6 @@ function JWMathParser() {
       for(var i = 0; i < bracketsTracker.length; i++){
         tokenized_array.push(this.keywordKatexEquivalent["INVISIBLE_CLOSING_BRACKET"])
       }
-      console.log("tokenized array")
-      console.log(tokenized_array)
 
       return tokenized_array;
     }
@@ -381,7 +379,6 @@ function JWMathParser() {
 
             }
         }
-        console.log(output.join(""))
         return "{" + output.join("") + "}";
     }
 
@@ -431,46 +428,3 @@ function JWMathParser() {
     }
 
 }
-
-$(document).on('input',
-    function(event) {
-        var j = new JWMathParser
-        var sIn = String($("#txtIn").val());
-        console.log(sIn);
-        console.log("tokenized")
-        console.log(j.tokenize(sIn))
-
-        var formattedKatex = j.convertText(sIn)
-
-        katex.render(formattedKatex, $("#divOut").get(0), {
-            displayMode: true
-        })
-
-        $("#mathjax-output").html("$$" + formattedKatex + "$$")
-
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "mathjax-output"],
-          function() {
-            var svg = $(".MathJax_SVG svg")[0];
-            if(svg){
-              var svgData = new XMLSerializer().serializeToString( svg );
-              //get svg data into a temporary image
-              var imgSrc = "data:image/svg+xml;base64," + btoa( svgData);
-
-              var canvas = document.createElement('canvas');
-              context = canvas.getContext("2d");
-
-              var image = new Image;
-              image.src = imgSrc;
-
-              image.onload = function(){
-                context.drawImage(image, 0, 0);//draw the svg image on a canvas
-                var canvasdata = canvas.toDataURL("image/png");//get the canvas as png
-                $("#svg-img-out").attr("src", canvasdata); //set the png data in an img tag to display as png
-                canvas = null;
-              };
-              $("#svg-img-out").attr("src",  "data:image/svg+xml;base64," + btoa( svgData ));
-
-            }
-          });
-
-    });

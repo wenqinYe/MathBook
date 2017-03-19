@@ -3,6 +3,9 @@ body{
   font-family: arial;
 }
 
+.logo {
+  text-align: center;
+}
 
 .equation-input{
   margin: 0 auto;
@@ -11,8 +14,11 @@ body{
   width: 617px;
   padding: 10px;
 
-  border: 1px solid #6B7F91;
-  outline: none;
+  font-family: 'Inconsolata';
+
+
+  border: 1px solid #DFE0E3;
+
 }
 
 
@@ -24,25 +30,49 @@ body{
 .math-output-container{
   position: relative;
   width: 617px;
-  height: 50px;
+  height: 70px;
   margin: 0 auto;
+
+  margin-top: 1%;
+  margin-bottom: 1%;
 }
+
 .math-output-container .math-output{
   position: absolute;
   top: 0;
   left: 0;
-  top: -20px;
   pointer-events: none;
 }
-.math-output-container img{
-  position: absolute;
-  left: 0;
 
-}
 
 #svg-img-out{
   position: absolute;
-  margin: 0 auto;
-  margin-bottom: 10px;
   opacity: 0;
+  position: absolute;
+  background-color: red;
+  top: 50%;
+  transform: translateY(-50%);
+
+}
+
+#mathjax-code-display{
+  width: 617px;
+
+  padding: 1%;
+  margin: 0 auto;
+}
+#mathjax-code-display #latex-code{
+  font-family: 'Inconsolata', monospace;
+}
+
+.code {
+  font-family: 'Inconsolata', monospace;
+  background-color: #FAFAFA;
+  border: 1px solid #DFE0E3;
+  border-radius: 5px;
+  padding: 1%;
+}
+.section {
+  padding-left: 5%;
+  padding-right: 5%;
 }
