@@ -1,37 +1,21 @@
-<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.css" integrity="sha384-wITovz90syo1dJWVh32uuETPVEtGigN07tkttEqPv+uR2SE/mbQcG7ATL28aI9H0" crossorigin="anonymous">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.7.1/katex.min.js" integrity="sha384-/y1Nn9+QQAipbNQWU65krzJralCnuOasHncUFXGkdwntGeSvQicrYkiUBwsgUqc1" crossorigin="anonymous"></script> -->
-<script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
-</script>
+
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({
   jax: ["input/MathML","output/SVG"],
-  extensions: ["mml2jax.js","MathEvents.js"],
-  MathML: {
-  extensions: ["content-mathml.js"]
-  },
   SVG: {
-  //font: "STIX-Web",
-  mtextFontInherit: true,
-   blacker: 1,
-  linebreaks: { automatic: true }
-  },
-  menuSettings: {
-  zoom: "Click"
-  },
-  MatchWebFonts: {
-  matchFor: {
-  SVG: true
-  },
-  fontCheckDelay: 500,
-  fontCheckTimeout: 15 * 1000
-  },
-  messageStyle: "none"
+    scale: 120,
+    useGlobalCache: false
+  }
   });
 
 </script>
-<div class="math-output" id = "divOut"> Type in Math Below (ex: sum_{i=0}^n i)</div>
+<div class="mathjax-output" id="mathjax-output"></div>
+<div class="math-output-container">
+  <img id="svg-img-out" class="svg-img-out" src="">
+
+  <div class="math-output" id = "divOut"> Type in Math Below (ex: sum_{i=0}^n i)</div>
+</div>
 <input class="equation-input" id="txtIn">
 
 </input>

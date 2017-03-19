@@ -15,9 +15,34 @@ body{
   outline: none;
 }
 
-.math-output{
-  text-align: center;
-  width: 100%;
-  wdith: 617px;
-  padding: 5px;
+
+.mathjax-output{
+  visibility: hidden;
+  display: none;
+
+}
+.math-output-container{
+  position: relative;
+  width: 617px;
+  height: 50px;
+  margin: 0 auto;
+}
+.math-output-container .math-output{
+  position: absolute;
+  top: 0;
+  left: 0;
+  top: -20px;
+  pointer-events: none;
+}
+.math-output-container img{
+  position: absolute;
+  left: 0;
+
+}
+
+#svg-img-out{
+  position: absolute;
+  margin: 0 auto;
+  margin-bottom: 10px;
+  opacity: 0;
 }

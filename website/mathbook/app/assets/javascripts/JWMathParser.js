@@ -441,16 +441,22 @@ $(document).on('input',
         console.log(j.tokenize(sIn))
 
         var formattedKatex = j.convertText(sIn)
-        // console.log(formattedKatex)
-        // katex.render(formattedKatex, $("#divOut").get(0), {
-        //     displayMode: true
-        // })
-        $("#divOut").html("$$" + formattedKatex + "$$")
 
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "divOut"],
+        katex.render(formattedKatex, $("#divOut").get(0), {
+            displayMode: true
+        })
+
+        $("#mathjax-output").html("$$" + formattedKatex + "$$")
+
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, "mathjax-output"],
           function() {
-    
-          });
+            var svg = $(".MathJax_SVG svg")[0];
+            if(svg){
+              var svgData = new XMLSerializer().serializeToString( svg );
 
+
+              $("#svg-img-out").attr("src",  "data:image/svg+xml;base64," + btoa( svgData ));
+            }
+          });
 
     });
