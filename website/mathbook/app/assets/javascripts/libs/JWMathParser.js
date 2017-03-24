@@ -168,7 +168,7 @@ function JWMathParser() {
       "]": " \\right] ",
 
       "INVISIBLE_CLOSING_BRACKET": " \\right. ",
-      "INVISIBLE_CLOSING_BRACKET": " \\left. "
+      "INVISIBLE_CLOSING_BRACKET": " \\left. ",
 
     }
 
@@ -226,6 +226,10 @@ function JWMathParser() {
     This function currently places curly brackets around round brackets
     **/
     this.preProcess = function(str) {
+        //cheap way to test if brackets are all paired
+        if(str.split("(").length !== str.split(")").length){
+          return str;
+        }
         if (str != undefined) {
             for (var i = 0; i < str.length; i++) {
                 if (str[i] == "(") { //insert "{" to the left of "("
@@ -278,6 +282,7 @@ function JWMathParser() {
      * @return a nested array representation of a math string
      */
     this.tokenize = function(str) {
+        console.log(str)
         //keeps track of the current nested array
         //that the loop is in
         var stack = []; //keeps track of the nested array hierarchy
@@ -292,7 +297,7 @@ function JWMathParser() {
         stack.push(output)
         var current = output; //stays on the current nested array
         var str = parseNumbers(str); //same as str.split("") but keeps digits of the same number together
-
+        console.log(str)
 
         for (var i = 0; i < str.length; i++) {
             current = stack[stack.length - 1];
@@ -311,8 +316,7 @@ function JWMathParser() {
                 current.push(str[i]);
             }
         }
-
-        output = this.tokenizeKeywords(output)
+        console.log(output)
         return output
     }
 
@@ -323,24 +327,30 @@ function JWMathParser() {
               ["\int", "3", "x"]
     */
     this.keywordsToKatex = function(tokenized_array){
+      console.log(tokenized_array)
       var openBracketsTracker = [];
       var closedBracketsTracker = [];
 
+      var curlyBracketCounter = 0;
       //convert keywords to their katex representation
       for(var i = 0; i < tokenized_array.length; i++){
         var token = tokenized_array[i]
         if(this.isKeyword(token)){
-          if(token == "{" || token == "(" || token == "["){
+          if(token == "(" || token == "["){
             openBracketsTracker.push(token)
-          }else if(token == "}" || token == ")" || token == "]"){
+          }else if(token == ")" || token == "]"){
             closedBracketsTracker.push(token)
           }
-
           tokenized_array[i] = this.keywordKatexEquivalent[token]
         }
 
-      }
+        if(token == "{"){
+          curlyBracketCounter += 1;
+        }else if(token == "}"){
+          curlyBracketCounter -= 1;
+        }
 
+      }
 
       //close un paired brackets with an invisible brackets
       if(openBracketsTracker.length > closedBracketsTracker.length){
@@ -355,6 +365,16 @@ function JWMathParser() {
         }
       }
 
+      if(curlyBracketCounter < 0){
+        for(var i = 0; i < -1 * curlyBracketCounter; i++){
+          tokenized_array.unshift("{")
+        }
+      }else if(curlyBracketCounter > 0){
+        for(var i = 0; i < -1 * curlyBracketCounter; i++){
+          tokenized_array.push("}")
+        }
+      }
+
       return tokenized_array;
     }
 
@@ -366,6 +386,7 @@ function JWMathParser() {
      * with no number beside it.
      */
     this.formattedToKatex = function(tokenized_array) {
+        //first transform any keywords into katex
         tokenized_array = this.keywordsToKatex(tokenized_array);
 
         // if (tokenized_array == undefined || tokenized_array.length == 1) {
@@ -447,7 +468,9 @@ function JWMathParser() {
     }
 
     this.convertText = function(mathString){
+      console.log(mathString)
       var preprocessedText = this.preProcess(mathString)
+      console.log(preprocessedText)
       var tokenizedText = this.tokenize(preprocessedText)
       return this.formattedToKatex(tokenizedText);
     }
