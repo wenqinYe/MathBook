@@ -30,11 +30,13 @@ function JWMathParser() {
       /****** Vectors *****/
       "hat": " \\hat ",
       "vec": " \\vec ",
+      "vector": " \\vec ",
 
       /****** Calculus Operators*****/
       "sum": " \\sum ",
       "int": " \\int ",
       "prod": " \\prod ",
+      "integral": " \\int ",
       "intint": " \\iint ",
       "int int": " \\iint ",
 
@@ -53,14 +55,16 @@ function JWMathParser() {
       "lim": " \\lim ",
       "limit": " \\lim ",
       "sin": " \\sin ",
-      "cos": " \\cos",
+      "cos": " \\cos ",
       "tan": " \\tan ",
-      "max": " \\max ",
       "ln": " \\ln ",
       "log": " \\log ",
       "cot": " \\cot ",
       "sec": " \\sec ",
       "csc": " \\csc ",
+
+      "max": " \\max ",
+      "arg": " \\arg ",
 
       /****** Special symbols and notation *****/
       "*": " \\cdot ",
@@ -82,6 +86,8 @@ function JWMathParser() {
       "->": " \\to ",
       "=>": " \\Rightarrow ",
       "implies": " \\Rightarrow ",
+
+      "pi": " \\pi ",
 
       // Not doesn't work...
       // "not": "\\not",
@@ -149,7 +155,6 @@ function JWMathParser() {
 
       /* Trig functions and log */
       "tan": " \\tan ",
-      "max": " \\max ",
       "ln": " \\ln ",
       "log": " \\log ",
       "cot": " \\cot ",
@@ -162,7 +167,8 @@ function JWMathParser() {
       "[": " \\left[ ",
       "]": " \\right] ",
 
-      "INVISIBLE_CLOSING_BRACKET": " \\right. "
+      "INVISIBLE_CLOSING_BRACKET": " \\right. ",
+      "INVISIBLE_CLOSING_BRACKET": " \\left. "
 
     }
 
@@ -257,6 +263,11 @@ function JWMathParser() {
         return out;
     }
 
+    var closeMissingBrackets = function(tokenized_array){
+
+        return tokenized_array
+    }
+
 
     /**
      * Takes a bracketed math string, and splits it into
@@ -282,13 +293,14 @@ function JWMathParser() {
         var current = output; //stays on the current nested array
         var str = parseNumbers(str); //same as str.split("") but keeps digits of the same number together
 
+
         for (var i = 0; i < str.length; i++) {
             current = stack[stack.length - 1];
             if (str[i] == "{") {
                 current.push([]);
                 stack.push(current[current.length - 1]);
                 current = stack[stack.length - 1];
-            } else if (str[i] == "}") {
+            } else if (str[i] == "}" && stack.length > 1) {
                 stack.pop();
                 current = stack[stack.length - 1]
                 //adding the extra character after closing
@@ -311,31 +323,36 @@ function JWMathParser() {
               ["\int", "3", "x"]
     */
     this.keywordsToKatex = function(tokenized_array){
-      /*
-      Keep track of possible missing brackets that the user
-      forgot to type so that they can
-      be closed with an invisible bracket
-      */
-      var bracketsTracker = [];
+      var openBracketsTracker = [];
+      var closedBracketsTracker = [];
 
       //convert keywords to their katex representation
       for(var i = 0; i < tokenized_array.length; i++){
-        token = tokenized_array[i]
+        var token = tokenized_array[i]
         if(this.isKeyword(token)){
-          if(token === "(" || token == "{" || token == "["){
-            bracketsTracker.push(token)
+          if(token == "{" || token == "(" || token == "["){
+            openBracketsTracker.push(token)
+          }else if(token == "}" || token == ")" || token == "]"){
+            closedBracketsTracker.push(token)
           }
-          if (token == ")" || token == "}" || token == "]"){
-            bracketsTracker.pop()
-          }
+
           tokenized_array[i] = this.keywordKatexEquivalent[token]
         }
+
       }
 
 
       //close un paired brackets with an invisible brackets
-      for(var i = 0; i < bracketsTracker.length; i++){
-        tokenized_array.push(this.keywordKatexEquivalent["INVISIBLE_CLOSING_BRACKET"])
+      if(openBracketsTracker.length > closedBracketsTracker.length){
+        var delta = openBracketsTracker.length - closedBracketsTracker.length;
+        for(var i = 0; i < delta; i++){
+          tokenized_array.push(this.keywordKatexEquivalent["INVISIBLE_CLOSING_BRACKET"])
+        }
+      }else if(closedBracketsTracker.length > openBracketsTracker.length){
+        var delta = closedBracketsTracker.length - openBracketsTracker.length;
+        for(var i = 0; i < delta; i++){
+          tokenized_array.unshift(this.keywordKatexEquivalent["INVISIBLE_CLOSING_BRACKET"])
+        }
       }
 
       return tokenized_array;
@@ -349,14 +366,21 @@ function JWMathParser() {
      * with no number beside it.
      */
     this.formattedToKatex = function(tokenized_array) {
+        tokenized_array = this.keywordsToKatex(tokenized_array);
+
+        // if (tokenized_array == undefined || tokenized_array.length == 1) {
+        //     return String(tokenized_array);
+        // }
+        if(tokenized_array.length == 1 && tokenized_array[0].constructor == Array){
+          return this.formattedToKatex(tokenized_array[0]);
+        }
         if (tokenized_array == undefined || tokenized_array.length == 1) {
-            return tokenized_array;
+            return String(tokenized_array);
         }
         if (tokenized_array.constructor == String) {
-            return [tokenized_array]
+            return tokenized_array
         }
 
-        tokenized_array = this.keywordsToKatex(tokenized_array);
 
         var output = [];
         var queue = tokenized_array;
@@ -370,7 +394,8 @@ function JWMathParser() {
 
             } else if (this.isOperator(token)) {
                 var previous = this.popNonEmpty(output) || ""
-                var after = this.formattedToKatex(queue.splice(0, 1)[0]) || "";
+                var after = queue.splice(0, 1)[0] || ""
+                var after = this.formattedToKatex(after) || "";
                 var result = this.routine[token](previous, after);
                 output = output.concat(result);
 

@@ -72,7 +72,15 @@ body{
   border-radius: 5px;
   padding: 1%;
 }
+.section .code {
+    cursor: pointer;
+}
 .section {
   padding-left: 5%;
   padding-right: 5%;
+}
+
+sub{
+  font-size: 12px;
+  font-weight: normal;
 }
