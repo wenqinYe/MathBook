@@ -268,7 +268,6 @@ function JWMathParser() {
     }
 
     var closeMissingBrackets = function(tokenized_array){
-
         return tokenized_array
     }
 
@@ -282,7 +281,6 @@ function JWMathParser() {
      * @return a nested array representation of a math string
      */
     this.tokenize = function(str) {
-        console.log(str)
         //keeps track of the current nested array
         //that the loop is in
         var stack = []; //keeps track of the nested array hierarchy
@@ -297,7 +295,8 @@ function JWMathParser() {
         stack.push(output)
         var current = output; //stays on the current nested array
         var str = parseNumbers(str); //same as str.split("") but keeps digits of the same number together
-        console.log(str)
+
+        var str = this.tokenizeKeywords(str)
 
         for (var i = 0; i < str.length; i++) {
             current = stack[stack.length - 1];
@@ -316,7 +315,7 @@ function JWMathParser() {
                 current.push(str[i]);
             }
         }
-        console.log(output)
+
         return output
     }
 
@@ -327,7 +326,6 @@ function JWMathParser() {
               ["\int", "3", "x"]
     */
     this.keywordsToKatex = function(tokenized_array){
-      console.log(tokenized_array)
       var openBracketsTracker = [];
       var closedBracketsTracker = [];
 
@@ -351,6 +349,7 @@ function JWMathParser() {
         }
 
       }
+      console.log(tokenized_array);
 
       //close un paired brackets with an invisible brackets
       if(openBracketsTracker.length > closedBracketsTracker.length){
@@ -468,9 +467,7 @@ function JWMathParser() {
     }
 
     this.convertText = function(mathString){
-      console.log(mathString)
       var preprocessedText = this.preProcess(mathString)
-      console.log(preprocessedText)
       var tokenizedText = this.tokenize(preprocessedText)
       return this.formattedToKatex(tokenizedText);
     }

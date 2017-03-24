@@ -15,10 +15,12 @@
 //= require turbolinks
 //= require_tree .
 
-var closingBracket = {
-  "{": "}",
-  "[": "]",
-  "(": ")"
+var autoComplete = {
+  "{": "{}",
+  "[": "[]",
+  "(": "()",
+  "^": "^{}",
+  "_": "_{}"
 }
 
 rerenderMath = function(){
@@ -61,9 +63,19 @@ rerenderMath = function(){
     });
 }
 
+var appendTextAtCursor = function(jqueryElem, text, cursorDisplacement){
+  var elem = jqueryElem.get(0);
+  caretPosition = elem.selectionStart;
+  var inputText = jqueryElem.val();
+
+  jqueryElem.val(inputText.substring(0, caretPosition) + text + inputText.substring(caretPosition));
+
+  elem.selectionStart = caretPosition + cursorDisplacement;
+  elem.selectionEnd = caretPosition + cursorDisplacement;
+}
+
 ready = function(){
   $(".section .code").on("click", function(){
-    console.log("here");
     $("#txtIn").val($(this).text().trim());
     rerenderMath();
     $(".logo")[0].scrollIntoView();
@@ -73,29 +85,24 @@ ready = function(){
 
   $("#txtIn").bind('keypress',function(event) {
         var char = String.fromCharCode(event.keyCode);
+
+        //bracket auto complete
         if(char == "{" || char == "[" || char == "("){
           event.preventDefault()
-          // Auto completes brackets
-          $("#txtIn").val($("#txtIn").val() + char + closingBracket[char])
-
-          var elem = $("#txtIn").get(0)
-          var elemLength = elem.value.length
-          elem.selectionStart = elemLength-1
-          elem.selectionEnd = elemLength-1
+          var jquery_elem = $("#txtIn")
+          appendTextAtCursor(jquery_elem, autoComplete[char], 1)
+          rerenderMath()
         }
         if(char == "^" || char == "_"){
           event.preventDefault()
-          $("#txtIn").val($("#txtIn").val() + char + "{}")
-
-          var elem = $("#txtIn").get(0)
-          var elemLength = elem.value.length
-          elem.selectionStart = elemLength-1
-          elem.selectionEnd = elemLength-1
+          var jquery_elem = $("#txtIn")
+          appendTextAtCursor(jquery_elem, autoComplete[char], 2)
+          rerenderMath()
         }
     });
     $("#txtIn").on('input',function(event) {
         rerenderMath();
-      });
+    });
 
 }
 
