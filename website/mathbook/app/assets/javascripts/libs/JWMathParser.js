@@ -9,6 +9,7 @@ function JWMathParser() {
         return item1 + "_" + "{" + item2 + "}"
     }
     this.routine["/"] = function(item1, item2) {
+
         return "\\frac{" + item1 + "}{" + item2 + "}"
     }
     this.routine["sqrt"] = function(item1, item2) {
@@ -16,14 +17,26 @@ function JWMathParser() {
     }
 
     /* Text is kind of broken right now */
-    // this.routine["text"] = function(item1, item2) {
-    //     return item1 + " \\text{" + item2 + "} "
-    // }
+    this.routine["text"] = function(item1) {
+        if(item1.trim() == "\\right)" || item1.trim() == "\\right."|| item1.trim() == "\\right}"|| item1.trim() == "\\right]"){
+            return " \\text{} " + item1
+        } else {
+          return " \\text{" + item1 + "} "
+        }
+    }
+    this.routine["mathrm"] = function(item1) {
+      if(item1.trim() == "\\right)" || item1.trim() == "\\right."|| item1.trim() == "\\right}"|| item1.trim() == "\\right]"){
+          return " \\text{} " + item1
+      } else {
+        return " \\text{" + item1 + "} "
+      }
+    }
 
     this.keywordKatexEquivalent = {
       /**** Routines that we don't want to convert just yet ****/
       "sqrt": "sqrt",
       "text": "text",
+      "mathrm": "mathrm",
       "over": "/",
 
 
@@ -36,20 +49,50 @@ function JWMathParser() {
       "sum": " \\sum ",
       "int": " \\int ",
       "prod": " \\prod ",
+      "product": " \\prod ",
       "integral": " \\int ",
       "intint": " \\iint ",
       "int int": " \\iint ",
 
       /****** Greek Letters *****/
-      "delta": " \\Delta ",
-      "epsilon": " \\epsilon ",
+      "Delta": " \\Delta ",
+      "Gamma": " \\Gamma ",
+      "Lamda": " \\Lamda",
+      "Omega": " \\Omega ",
+      "Phi": " \\Phi ",
+      "Psi": " \\Psi",
+      "Sigma": " \\Sigma ",
+      "Theta": " \\Theta ",
+      "Xi": " \\Xi ",
+
+
       "alpha": " \\alpha ",
       "beta": " \\beta ",
+      "chi": " \\chi ",
+      "delta": " \\delta ",
+      "epsilon": " \\epsilon ",
+      "varepsilon": " \\varepsilon ",
+      "eta": " \\eta ",
       "gamma": " \\gamma ",
+      "iota": " \\iota ",
+      "kappa": " \\kappa ",
+      "lambda": " \\lambda ",
+      "lamda": " \\lambda ",
+      "mu": " \\mu ",
+      "nu": " \\nu ",
       "omega": " \\omega ",
-      "Omega": " \\Omega ",
+      "phi": " \\phi ",
+      "varphi": " \\varphi ",
+      "pi": " \\pi ",
+      "psi": " \\psi ",
+      "rho": " \\rho ",
       "sigma": " \\sigma ",
-      "Sigma": " \\sum ",
+      "tau": " \\tau ",
+      "theta": " \\theta ",
+      "vartheta": " \\vartheta ",
+      "upsilon": " \\upsilon ",
+      "xi": " \\xi ",
+      "zeta": " \\zeta ",
 
       /****** Special Functions *****/
       "lim": " \\lim ",
@@ -77,6 +120,7 @@ function JWMathParser() {
       "plusminus": " \\pm ",
       "plusrorminus": " \\pm ",
       "pm": " \\pm ",
+      "+-": " \\pm ",
 
       "minusplus": " \\mp ",
       "minusorplus": " \\mp ",
@@ -146,12 +190,18 @@ function JWMathParser() {
 
 
       /* Less than, greater than etc. */
-      "lesstahn": " \\lt ",
+      "lessthan": " \\lt ",
       "greaterthan": " \\gt ",
       "lt": " \\lt ",
       "gt": " \\gt ",
+      "lte": " \\le ",
+      "gte": " \\ge ",
       "le": " \\le ",
       "ge": " \\ge ",
+      "<=": " \\le ",
+      ">=": " \\ge ",
+      "!=": " \\ne ",
+      "ne": " \\ne ",
 
       /* Trig functions and log */
       "tan": " \\tan ",
@@ -168,7 +218,7 @@ function JWMathParser() {
       "]": " \\right] ",
 
       "INVISIBLE_CLOSING_BRACKET": " \\right. ",
-      "INVISIBLE_CLOSING_BRACKET": " \\left. ",
+      "INVISIBLE_OPENING_BRACKET": " \\left. ",
 
     }
 
@@ -220,6 +270,20 @@ function JWMathParser() {
             var output = stack.pop();
         }
         return output
+    }
+    //traverses the entire array and subarrays and joins the elements
+    this.recursiveJoin = function(arr){
+      var output = "";
+      for(var i = 0; i < arr.length; i++){
+        if(arr[i].constructor == String){
+          output += arr[i];
+        }
+        if(arr[i].constructor == Array){
+          output += this.recursiveJoin(arr[i]);
+        }
+      }
+
+      return output;
     }
 
     /** Do some stuff with the user's text before anything else happens.
@@ -315,7 +379,6 @@ function JWMathParser() {
                 current.push(str[i]);
             }
         }
-
         return output
     }
 
@@ -333,6 +396,11 @@ function JWMathParser() {
       //convert keywords to their katex representation
       for(var i = 0; i < tokenized_array.length; i++){
         var token = tokenized_array[i]
+        // if(token == "text"  || token == "mathrm"){
+        //   tokenized_array[i] = " \\text "
+        //   i += 1;
+        //   continue;
+        // }
         if(this.isKeyword(token)){
           if(token == "(" || token == "["){
             openBracketsTracker.push(token)
@@ -349,7 +417,6 @@ function JWMathParser() {
         }
 
       }
-      console.log(tokenized_array);
 
       //close un paired brackets with an invisible brackets
       if(openBracketsTracker.length > closedBracketsTracker.length){
@@ -360,7 +427,7 @@ function JWMathParser() {
       }else if(closedBracketsTracker.length > openBracketsTracker.length){
         var delta = closedBracketsTracker.length - openBracketsTracker.length;
         for(var i = 0; i < delta; i++){
-          tokenized_array.unshift(this.keywordKatexEquivalent["INVISIBLE_CLOSING_BRACKET"])
+          tokenized_array.unshift(this.keywordKatexEquivalent["INVISIBLE_OPENING_BRACKET"])
         }
       }
 
@@ -388,9 +455,6 @@ function JWMathParser() {
         //first transform any keywords into katex
         tokenized_array = this.keywordsToKatex(tokenized_array);
 
-        // if (tokenized_array == undefined || tokenized_array.length == 1) {
-        //     return String(tokenized_array);
-        // }
         if(tokenized_array.length == 1 && tokenized_array[0].constructor == Array){
           return this.formattedToKatex(tokenized_array[0]);
         }
@@ -409,8 +473,20 @@ function JWMathParser() {
 
         while (queue.length > 0) {
             var token = queue.splice(0, 1)[0];
+            console.log(token)
             if (token.constructor == Array) {
                 output.push(this.formattedToKatex(token))
+            }else if(token.trim() == "text" || token.trim() == "mathrm"){
+              console.log("is text")
+              //text is a special case because we don't want
+              //what is next to be "formatted as katex"
+              //we just want to keep it as is
+              var after = queue.splice(0, 1)[0] || ""
+              if(after.constructor == Array){
+                after = this.recursiveJoin(after)
+                console.log(after)
+              }
+              output.push(this.routine[token](after))
 
             } else if (this.isOperator(token)) {
                 var previous = this.popNonEmpty(output) || ""
@@ -424,6 +500,7 @@ function JWMathParser() {
 
             }
         }
+        console.log(output)
         return "{" + output.join("") + "}";
     }
 

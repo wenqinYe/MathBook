@@ -23,11 +23,11 @@ body{
 
 
 .mathjax-output{
-  visibility: hidden;
   display: none;
 
 }
 .math-output-container{
+
   position: relative;
   width: 617px;
   height: 70px;
@@ -36,6 +36,7 @@ body{
   margin-top: 1%;
   margin-bottom: 1%;
 }
+
 
 .math-output-container .math-output{
   position: absolute;
@@ -73,14 +74,26 @@ body{
   padding: 1%;
 }
 .section .code {
-    cursor: pointer;
+  cursor: pointer;
 }
 .section {
   padding-left: 5%;
   padding-right: 5%;
 }
 
+.notice {
+  font-family: 'Inconsolata', monospace;
+  font-size: 14px;
+  text-align: center;
+}
+
 sub{
   font-size: 12px;
   font-weight: normal;
+}
+@media screen and (min-width: 480px){
+  .documentation {
+    width: 75%;
+    margin: 0 auto;
+  }
 }

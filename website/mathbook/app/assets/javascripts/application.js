@@ -75,7 +75,10 @@ var appendTextAtCursor = function(jqueryElem, text, cursorDisplacement){
 }
 
 ready = function(){
+
+  $("#mathjax-code-display").css("visibility", "hidden");
   $(".section .code").on("click", function(){
+    $("#mathjax-code-display").css("visibility", "visible");
     $("#txtIn").val($(this).text().trim());
     rerenderMath();
     $(".logo")[0].scrollIntoView();
@@ -93,14 +96,16 @@ ready = function(){
           appendTextAtCursor(jquery_elem, autoComplete[char], 1)
           rerenderMath()
         }
-        if(char == "^" || char == "_"){
-          event.preventDefault()
-          var jquery_elem = $("#txtIn")
-          appendTextAtCursor(jquery_elem, autoComplete[char], 2)
-          rerenderMath()
-        }
+        // if(char == "^" || char == "_"){
+        //   event.preventDefault()
+        //   var jquery_elem = $("#txtIn")
+        //   appendTextAtCursor(jquery_elem, autoComplete[char], 2)
+        //   rerenderMath()
+        // }
+
     });
     $("#txtIn").on('input',function(event) {
+        $("#mathjax-code-display").css("visibility", "visible");
         rerenderMath();
     });
 
