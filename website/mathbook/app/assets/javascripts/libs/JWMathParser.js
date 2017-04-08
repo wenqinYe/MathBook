@@ -537,7 +537,6 @@ autoLim = function(str){
 
         while (queue.length > 0) {
             var token = queue.splice(0, 1)[0];
-            console.log(token)
 
             if (token.constructor == Array) {
                 output.push(this.formattedToKatex(token))
