@@ -13,7 +13,10 @@ function JWMathParser() {
         return "\\frac{" + item1 + "}{" + item2 + "}"
     }
     this.routine["sqrt"] = function(item1, item2) {
-        return item1 + " \\sqrt{" + item2 + "} "
+        //the array is put on purpose!
+        //this is so item1 and sqrt{item2} are not combined
+        //if there is an operator after
+        return [item1, " \\sqrt{" + item2 + "} "]
     }
 
     /* Text is kind of broken right now */
@@ -534,7 +537,8 @@ autoLim = function(str){
 
         while (queue.length > 0) {
             var token = queue.splice(0, 1)[0];
-            //console.log(token)
+            console.log(token)
+
             if (token.constructor == Array) {
                 output.push(this.formattedToKatex(token))
             }else if(token.trim() == "text" || token.trim() == "mathrm"){
@@ -550,6 +554,7 @@ autoLim = function(str){
               output.push(this.routine[token](after))
 
             } else if (this.isOperator(token)) {
+
                 var previous = this.popNonEmpty(output) || ""
                 var after = queue.splice(0, 1)[0] || ""
                 var after = this.formattedToKatex(after) || "";
