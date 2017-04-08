@@ -457,9 +457,13 @@ autoLim = function(str){
       var closedBracketsTracker = [];
 
       var curlyBracketCounter = 0;
+      var prevIsText = false; //TEST
+      var isText = false; //is current stuff supposed to be text
+      var textBracketCount = 0;
       //convert keywords to their katex representation
       for(var i = 0; i < tokenized_array.length; i++){
         var token = tokenized_array[i]
+
         // if(token == "text"  || token == "mathrm"){
         //   tokenized_array[i] = " \\text "
         //   i += 1;
@@ -471,13 +475,34 @@ autoLim = function(str){
           }else if(token == ")" || token == "]"){
             closedBracketsTracker.push(token)
           }
-          tokenized_array[i] = this.keywordKatexEquivalent[token]
+          //TEST
+          if(!isText){
+            tokenized_array[i] = this.keywordKatexEquivalent[token]
+          }
+          else{
+            tokenized_array[i] = token;
+          }
         }
 
         if(token == "{"){
           curlyBracketCounter += 1;
         }else if(token == "}"){
           curlyBracketCounter -= 1;
+        }
+
+        //TEST
+        if(token == "{" && prevIsText){
+          textBracketCount = curlyBracketCounter;
+          isText = true;
+        }
+        if(token == "}" && isText && curlyBracketCounter < textBracketCount){
+          isText = false;
+        }
+        if(token == "text"  || token == "mathrm"){
+          prevIsText = true;
+        }
+        else{
+          prevIsText = false;
         }
 
       }
