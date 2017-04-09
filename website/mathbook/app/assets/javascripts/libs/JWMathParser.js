@@ -311,11 +311,11 @@ autoLog = function(str){
   var offset = 0;
   for(var i = 0; i < logIndexes.length; i++){
     var ind = logIndexes[i] + offset + 3; //index of char in front of "log", should always? be an underscore
-    if(!isNaN(str[ind])){ //if its a number, put underscore and brackets, ASSUME 1 digit number only
+    /*if(!isNaN(str[ind])){ //if its a number, put underscore and brackets, ASSUME 1 digit number only
       str = str.substring(0, ind) + "_{" + str[ind] + "}" + str.substring(ind+1, str.length);
       offset += 3; //length of str has changed by 3
     }
-    else if(str[ind] == "(" || str[ind] == "{"){ //user probably forgot to put underscore => put it there for them
+    else*/ if(str[ind] == "(" || str[ind] == "{"){ //user probably forgot to put underscore => put it there for them
       str = str.substring(0, ind) + "_" + str[ind] + str.substring(ind+1, str.length);
       offset += 1; //length of str has changed by 1
     }
@@ -357,7 +357,7 @@ autoLim = function(str){
           str = str.substring(0, iText + sText.length) + " " + str.substring(iText + sText.length, str.length);
         }
       }while(iText != -1)
-      
+
       sText = "mathrm{";
       do{
         iText = str.indexOf(sText, iText+1); //look ahead to search for the next text/mathrm
