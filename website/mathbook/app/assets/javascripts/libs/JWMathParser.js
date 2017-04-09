@@ -348,6 +348,24 @@ autoLim = function(str){
     This function currently places curly brackets around round brackets
     **/
     this.preProcess = function(str) {
+      //TEMPORARY PATCH TO text{} issues with keywords such as "int", "lim"
+      var sText = "text{"; //string to search for since there are two ways to write text ("text{}" and "mathrm{}")
+      var iText = -1;
+      do{
+        iText = str.indexOf(sText, iText+1); //look ahead to search for the next text/mathrm
+        if(iText > -1){
+          str = str.substring(0, iText + sText.length) + " " + str.substring(iText + sText.length, str.length);
+        }
+      }while(iText != -1)
+      
+      sText = "mathrm{";
+      do{
+        iText = str.indexOf(sText, iText+1); //look ahead to search for the next text/mathrm
+        if(iText > -1){
+          str = str.substring(0, iText + sText.length) + " " + str.substring(iText + sText.length, str.length);
+        }
+      }while(iText != -1)
+
       //do some autoformatting => THIS STUFF SHOULD STILL OCCUR EVEN IF brackets are not paired;
       //i.e. put this in front of the if statement below
       str = autoLog(str);  //Added autocomplete stuff for "log"
