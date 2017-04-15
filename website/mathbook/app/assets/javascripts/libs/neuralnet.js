@@ -15,8 +15,7 @@ biases = [b1, b2]
 initializeLayers(2, [3, 2]); //setup net to take 2 inputs; have 3 nodes in the first layer, 2 in the second
 //console.log(weights);
 //console.log(biases);
-outputs = []
-
+outputs = [];
 
 
 /**
@@ -43,8 +42,6 @@ function initializeLayers(nInputs, arrLayers){
     biases.push(math.random([arrLayers[i]], -1, 1)); //add biases as well
   }
 
-  //TESTING
-  //console.log(forward([1, 3]));
 }
 
 function sigmoid(vector) {
@@ -73,6 +70,7 @@ var forward = function(input) {
 }
 
 var backprop = function(output, expected) {
+
     //error calculation
     var dOutput = math.subtract(expected, output);
 
@@ -117,6 +115,22 @@ var openFile = function(path){
 
 openFile("/app/assets/data/training_set_rel3.tsv")
 
+/**
+  @param {array} inputs 2d array of inputs. inputs[0] is the first set of inputs for the neural net
+  @param {array} answers 2d array of answers. answers[0] is the first set of answers/correct outputs for the neural net
+  @param {number} nTimes How many times to train the neural net with the given inputs/outputs
+**/
+function train(inputs, answers, nTimes){
+  for(var i = 0; i < nTimes; i++){
+    for(var j = 0; j < inputs.length; j++){
+      outputs = [];
+      outputs.push(inputs[j]);
+      out = forward(inputs[j]);
+      //console.log(out)
+      backprop(out, answers[j]);
+    }
+  }
+}
 
 // input = math.random([2])
 // outputs.push(input)
