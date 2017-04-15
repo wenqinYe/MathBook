@@ -1,6 +1,8 @@
 X = ["log"];
 Y = [""]
-
+weights = [];
+biases = [];
+/*
 w1 = math.random([3, 2], -1, 1)
 w2 = math.random([2, 3], -1, 1)
 weights = [w1, w2]
@@ -8,8 +10,42 @@ weights = [w1, w2]
 b1 = math.random([3], -1, 1)
 b2 = math.random([2], -1, 1)
 biases = [b1, b2]
-
+*/
+//above was replaced by: initializeLayers(2, [3, 2]);
+initializeLayers(2, [3, 2]); //setup net to take 2 inputs; have 3 nodes in the first layer, 2 in the second
+//console.log(weights);
+//console.log(biases);
 outputs = []
+
+
+
+/**
+@param {number} nInputs The number of inputs given to the net
+@param {array} arrLayers An array of integers specifying the number of nodes in each layers. I.e. [3, 4], first layer has 3 neurons, second has 4
+**/
+function initializeLayers(nInputs, arrLayers){
+  weights = []; //clear weights
+  biases = []; //clear biases
+
+  for(var i = 0; i < arrLayers.length; i++){
+    var nLayerInputs = 0; //number of inputs going into a node at the current layer
+    if(i == 0){
+      nLayerInputs = nInputs; //first layer receives the real inputs
+    }
+    else{
+      nLayerInputs = arrLayers[i-1]; //number of inputs is equal to number of outputs/nodes from previous layer
+    }
+
+    //number of nodes in the layer is determined by user through arrLayers
+    //number of weights for each node in the layer is equal to the number of inputs coming into the layer
+    var layer = math.random([arrLayers[i], nLayerInputs], -1, 1);
+    weights.push(layer);
+    biases.push(math.random([arrLayers[i]], -1, 1)); //add biases as well
+  }
+
+  //TESTING
+  //console.log(forward([1, 3]));
+}
 
 function sigmoid(vector) {
     return vector.map(function(value, index, matrix) {
@@ -25,7 +61,7 @@ var forward = function(input) {
         var bias = biases[i];
 
         output = math.multiply(weight, previous);
-        outout = math.add(output, bias)
+        output = math.add(output, bias); //fixed typo? "outout" changed to be "output"?
         output = sigmoid(output)
 
         outputs.push(output)
