@@ -1,48 +1,41 @@
-
-function Node(x, y, connections, weights, bias){
-  this.x = x;
-  this.y = y;
-  this.connections = connections;
-  this.weights = weights;
-  this.bias = bias;
-  this.text = "";
-  this.r = random(255);
-  this.g = random(255);
-  this.b = random(255);
-  this.radius = 25;
-  this.isSelected = false;
-
-  this.drawNode = function(){
-    stroke(this.r, this.g, this.b);
-    fill(this.r+90, this.g+90, this.b+90);
-
-    this.radius = this.isSelected?27:25;
-    ellipse(this.x, this.y, this.radius*2, this.radius*2);
-    fill(0);
-    textSize(12);
-    text(this.text, this.x, this.y);
-  }
-
-  this.drawConnections = function(){
-    strokeWeight(this.isSelected?3:1);
-    stroke(this.r, this.g, this.b);
-    for(var i = 0; i < this.connections.length; i++){
-      line(this.x, this.y, this.connections[i].x, this.connections[i].y);
-    }
-
+function Test(){
+this.setup = function(p){
+  createCanvas(300, 300);
+}
+  this.draw = function(p){
+    p.background(255, 0, 0);
   }
 }
 
-function setupNodes(neuralNet){
+function NeuralNetDisplay (neuralNet){
+this.neuralNet = neuralNet;
+
+ // NOT SURE WHY IT DOESNT WORK; error: this.pSetup is not a function
+startDisplay = function(display){
+  var myp5 = new p5(function(p){
+
+    p.setup = function(){
+      display.pSetup(p);
+    }
+    p.draw = function(){
+      display.pDraw(p);
+    }
+    p.mousePressed = function(){
+      display.pMousePressed(p);
+    }
+  });
+}
+
+this.setupNodes = function (p){
 
   var inputNodes = []; //add input nodes
-  var r = random(170); //random color
-  var g = random(170);
-  var b = random(170);
-  for(var i = 0; i < neuralNet.nInputs; i++){
+  var r = p.random(170); //random color
+  var g = p.random(170);
+  var b = p.random(170);
+  for(var i = 0; i < this.neuralNet.nInputs; i++){
     var border = 100;
-    var ySpacing = min((height-border*2)/(neuralNet.nInputs-1), 200);
-    var yOffset = (height - ySpacing * (neuralNet.nInputs-1))/2;
+    var ySpacing = p.min((p.height-border*2)/(this.neuralNet.nInputs-1), 200);
+    var yOffset = (p.height - ySpacing * (this.neuralNet.nInputs-1))/2;
     var n = new Node(150, yOffset + ySpacing*i, [], [], []);
     n.r = r;
     n.g = g;
@@ -50,92 +43,99 @@ function setupNodes(neuralNet){
     n.text = "Input " + (i+1);
     inputNodes.push(n);
   }
-  nodes.push(inputNodes);
+  this.nodes.push(inputNodes);
 
 
   var previousLayer = inputNodes;
   var currentLayer = [];
-  for(var i = 0; i <neuralNet.weights.length; i++){ //create nodes for the layers
+  for(var i = 0; i <this.neuralNet.weights.length; i++){ //create nodes for the layers
     var border = 100;
-    var ySpacing = min((height-border*2)/(neuralNet.weights[i].length-1), 200); //spacing between nodes
-    var yOffset = (height - ySpacing * (neuralNet.weights[i].length-1))/2;
-    var r = random(170); //random color per layer
-    var g = random(170);
-    var b = random(170);
+    var ySpacing = p.min((p.height-border*2)/(this.neuralNet.weights[i].length-1), 200); //spacing between nodes
+    var yOffset = (p.height - ySpacing * (this.neuralNet.weights[i].length-1))/2;
+    var r = p.random(170); //random color per layer
+    var g = p.random(170);
+    var b = p.random(170);
 
-    for(var j = 0; j < neuralNet.weights[i].length; j++){
-      node = new Node(300 + i*150, yOffset + ySpacing*j, previousLayer, neuralNet.weights[i][j], neuralNet.biases[i][j]);
+    for(var j = 0; j < this.neuralNet.weights[i].length; j++){
+      node = new Node(300 + i*150, yOffset + ySpacing*j, previousLayer, this.neuralNet.weights[i][j], this.neuralNet.biases[i][j]);
       node.r = r;
       node.g = g;
       node.b = b;
       node.text = "N" + (j+1);
       currentLayer.push(node);
     }
-    nodes.push(currentLayer);
+    this.nodes.push(currentLayer);
     previousLayer = currentLayer;
     currentLayer = [];
   }
-}
-
-var nodes = [];
-var pSelectedNode;
-function setup(){
-  createCanvas(1100, 600);
-  pSelectedNode = createP("Click on a node to see its weights and bias");
-  pSelectedNode.style("float", "left");
-  pSelectedNode.style("margin-right", "1cm");
-  pSelectedNode.style("width", "5cm");
-  pSelectedNode.style("text-align", "center");
-  var net = new NeuralNet();
-  net.initializeLayers(3, [4, 6, 2, 5]);
-  setupNodes(net); //setup nodes
-  console.log(nodes[0]);
-}
-
-
-function draw(){
-  background(248);
-  ellipseMode(CENTER);
-  rectMode(CENTER);
-  textAlign(CENTER);
-  for(var i = 0; i < nodes.length; i++){
-    for(var j = 0; j < nodes[i].length; j++){
-      nodes[i][j].drawConnections();
+  for(var i = 0; i < this.nodes.length-1; i++){
+    for(var j = 0; j < this.nodes[i].length; j++){
+      this.nodes[i][j].forwardLayer = this.nodes[i+1];
     }
   }
-  for(var i = 0; i < nodes.length; i++){
-    fill(0);
+}
+
+this.nodes = []; //3d array; nodes[2][3] retrieves the 4th node in layer 3
+this.pSelectedNode;
+this.pSetup = function(p){
+  p.createCanvas(1100, 600);
+  this.pSelectedNode = p.createP("Click on a node to see its weights and bias");
+  this.pSelectedNode.style("float", "left");
+  this.pSelectedNode.style("margin-right", "1cm");
+  this.pSelectedNode.style("width", "5cm");
+  this.pSelectedNode.style("text-align", "center");
+  //var net = new NeuralNet();
+  //net.initializeLayers(3, [4, 6, 2, 5]);
+  //this.setupNodes(p); //setup nodes
+  this.setupNodes(p);
+  console.log(this.nodes[0]);
+}
+
+
+ this.pDraw = function(p){
+  p.background(248);
+  p.ellipseMode(p.CENTER);
+  p.rectMode(p.CENTER);
+  p.textAlign(p.CENTER);
+  for(var i = 0; i < this.nodes.length; i++){
+    for(var j = 0; j < this.nodes[i].length; j++){
+      this.nodes[i][j].drawConnections(p);
+    }
+  }
+  for(var i = 0; i < this.nodes.length; i++){
+    p.fill(0);
     var txt = i==0? "Input layer" : "Layer " + i;
-    noStroke();
-    textSize(16);
-    text(txt, 150 + i * 150, 40);
-    for(var j = 0; j < nodes[i].length; j++){
-      nodes[i][j].drawNode();
+    p.noStroke();
+    p.textSize(16);
+    p.text(txt, 150 + i * 150, 40);
+    for(var j = 0; j < this.nodes[i].length; j++){
+      this.nodes[i][j].drawNode(p);
     }
   }
 }
 
-var selectedNode = null;
-function mousePressed(){
-  for(var i = 0; i < nodes.length; i++){
-    for(var j = 0; j < nodes[i].length; j++){
-      var node = nodes[i][j];
-      var dist = sqrt(pow(mouseX - node.x, 2) + pow(mouseY - node.y, 2));
+this.selectedNode = null;
+this.pMousePressed =  function (p){
+  for(var i = 0; i < this.nodes.length; i++){
+    for(var j = 0; j < this.nodes[i].length; j++){
+      var node = this.nodes[i][j];
+      var dist = p.sqrt(p.pow(p.mouseX - node.x, 2) + p.pow(p.mouseY - node.y, 2));
       var dColor = 70;
 
       if(dist <= node.radius){
-        if(selectedNode != null){
-          selectedNode.isSelected = false;
-          selectedNode.r -= dColor;
-          selectedNode.g -= dColor;
-          selectedNode.b -= dColor;
+        if(this.selectedNode != null){
+          this.selectedNode.isSelected = false;
+          this.selectedNode.r -= dColor;
+          this.selectedNode.g -= dColor;
+          this.selectedNode.b -= dColor;
         }
         node.isSelected = true;
         node.r += dColor;
         node.g += dColor;
         node.b += dColor;
-        selectedNode = node;
+        this.selectedNode = node;
 
+        this.selectedNode.startForwardAnimation(); //temp test
 
         var s = "";
         if(node.weights.length > 0){
@@ -147,10 +147,10 @@ function mousePressed(){
       else{
         s = "Input node"
       }
-        pSelectedNode.html(s);
+        this.pSelectedNode.html(s);
       }
 
     }
   }
-
+}
 }
