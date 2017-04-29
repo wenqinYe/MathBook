@@ -1,11 +1,4 @@
-function Test(){
-this.setup = function(p){
-  createCanvas(300, 300);
-}
-  this.draw = function(p){
-    p.background(255, 0, 0);
-  }
-}
+
 
 function NeuralNetDisplay (neuralNet){
 this.neuralNet = neuralNet;
