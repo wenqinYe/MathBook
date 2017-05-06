@@ -3,8 +3,11 @@
 function NeuralNetDisplay (neuralNet){
 this.neuralNet = neuralNet;
 
- // NOT SURE WHY IT DOESNT WORK; error: this.pSetup is not a function
-startDisplay = function(display){
+ /**
+ @param {NeuralNetDisplay} display NeuralNetDisplay object to display
+ @param {number} htmlControlId The id of the html control that the display should output to
+ **/
+startDisplay = function(display, htmlControlId){
   var myp5 = new p5(function(p){
 
     p.setup = function(){
@@ -16,7 +19,7 @@ startDisplay = function(display){
     p.mousePressed = function(){
       display.pMousePressed(p);
     }
-  });
+  }, htmlControlId); //display to htmlControlId
 }
 
 this.setupNodes = function (p){
@@ -41,6 +44,7 @@ this.setupNodes = function (p){
 
   var previousLayer = inputNodes;
   var currentLayer = [];
+  var xSpacing = (p.width-200)/this.neuralNet.weights.length;
   for(var i = 0; i <this.neuralNet.weights.length; i++){ //create nodes for the layers
     var border = 100;
     var ySpacing = p.min((p.height-border*2)/(this.neuralNet.weights[i].length-1), 200); //spacing between nodes
@@ -50,7 +54,7 @@ this.setupNodes = function (p){
     var b = p.random(170);
 
     for(var j = 0; j < this.neuralNet.weights[i].length; j++){
-      node = new Node(300 + i*150, yOffset + ySpacing*j, previousLayer, this.neuralNet.weights[i][j], this.neuralNet.biases[i][j]);
+      node = new Node(300 + i*xSpacing, yOffset + ySpacing*j, previousLayer, this.neuralNet.weights[i][j], this.neuralNet.biases[i][j]);
       node.r = r;
       node.g = g;
       node.b = b;
@@ -66,26 +70,63 @@ this.setupNodes = function (p){
       this.nodes[i][j].forwardLayer = this.nodes[i+1];
     }
   }
+  this.firstNode = this.nodes[0][0];
 }
 
-this.nodes = []; //3d array; nodes[2][3] retrieves the 4th node in layer 3
-this.pSelectedNode;
+this.nodes = []; //2d array; nodes[2][3] retrieves the 4th node in layer 3
+this.shouldSetupNodes = false;
+
 this.pSetup = function(p){
+  this.p5 = p;
   p.createCanvas(1100, 600);
+  this.setupNodes(p);
   this.pSelectedNode = p.createP("Click on a node to see its weights and bias");
   this.pSelectedNode.style("float", "left");
   this.pSelectedNode.style("margin-right", "1cm");
   this.pSelectedNode.style("width", "5cm");
   this.pSelectedNode.style("text-align", "center");
-  //var net = new NeuralNet();
-  //net.initializeLayers(3, [4, 6, 2, 5]);
-  //this.setupNodes(p); //setup nodes
-  this.setupNodes(p);
-  console.log(this.nodes[0]);
+
+  this.buttonFeedForward = p.createButton("Feed forward");
+  this.buttonFeedForward.style("float", "left");
+
+  this.buttonFeedForward.mousePressed(this.buttonFeedForwardPressed);
+
+
+  this.buttonRandomNet = p.createButton("Create random size net");
+  this.buttonRandomNet.style("float", "left");
+  this.buttonRandomNet.mousePressed(this.buttonRandomNetPressed);
+  //console.log(this.nodes[0]);
 }
+
+this.buttonFeedForwardPressed = (function(){
+  //console.log(this.firstNode);
+  this.firstNode.startForwardAnimation();
+}).bind(this); //MUST DO IN ORDER TO BE ABLE TO REFER TO "this"
+
+this.buttonRandomNetPressed = (function(){
+
+  var inputs = 1 + Math.floor(Math.random()*8);
+  var nLayers = 1 + Math.floor(Math.random()*8);
+  var layers = [];
+  for(var i = 0; i < nLayers; i++){
+    layers[i] = 1 + Math.floor(Math.random()*8);
+  }
+  console.log(layers);
+
+  this.neuralNet = new NeuralNet();
+  this.neuralNet.initializeLayers(inputs, layers);
+  this.nodes = [];
+
+  this.shouldSetupNodes = true;
+}).bind(this);
+
 
 
  this.pDraw = function(p){
+   if(this.shouldSetupNodes){
+     this.setupNodes(p);
+     this.shouldSetupNodes = false;
+   }
   p.background(248);
   p.ellipseMode(p.CENTER);
   p.rectMode(p.CENTER);
